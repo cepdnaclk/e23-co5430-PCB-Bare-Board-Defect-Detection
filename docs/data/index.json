@@ -1,0 +1,38 @@
+{
+    "title": "MicroInspect - PCB Bare-Board Defect Detection Computer Vision Pipeline",
+    "team": [
+        {
+            "name": "S.M.D.S.B. Samarakoon",
+            "email": "e23336@eng.pdn.ac.lk",
+            "eNumber": "E/23/336"
+        },
+        {
+            "name": "W.R.A.D.N. Gunathilaka",
+            "email": "e23117@eng.pdn.ac.lk",
+            "eNumber": "E/23/117"
+        },
+        {
+            "name": "P.I.N. Bandara",
+            "email": "e23035@eng.pdn.ac.lk",
+            "eNumber": "E/23/035"
+        },
+        {
+            "name": "G.P.M. Gamage",
+            "email": "e23104@eng.pdn.ac.lk",
+            "eNumber": "E/23/104"
+        }
+    ],
+    "tags": [
+        "Computer Vision",
+        "Image Processing",
+        "PCB",
+        "Bare-Board",
+        "Defect Detection",
+        "Machine Learning",
+        "OpenCV",
+        "TensorFlow",
+        "Deep Learning",
+        "Python",
+        "YOLO"
+    ]
+}
