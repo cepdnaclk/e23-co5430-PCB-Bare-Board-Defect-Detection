@@ -1,0 +1,12 @@
+# Dataset paths
+raw_data_dir: "/home/dilith_s_b_s/CVProject/Datasets/akhatova/pcb-defects/versions/1/PCB_DATASET"
+processed_data_dir: "/home/dilith_s_b_s/CVProject/e23-co5430-PCB-Bare-Board-Defect-Detection/data/processed"
+
+# Tiling parameters
+tile_size: 640
+overlap: 0.15
+
+# Training parameters
+batch_size: 16
+epochs: 50
+model_name: "yolo11n.pt"
