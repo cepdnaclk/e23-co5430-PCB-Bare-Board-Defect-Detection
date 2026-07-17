@@ -16,6 +16,12 @@ def align_images(im1, im2):
     im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
     im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
 
+    # Apply CLAHE (Contrast Limited Adaptive Histogram Equalization)
+    # to mitigate lighting variations as specified in the proposal.
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    im1_gray = clahe.apply(im1_gray)
+    im2_gray = clahe.apply(im2_gray)
+
     # Detect ORB features and compute descriptors.
     orb = cv2.ORB_create(MAX_FEATURES)
     keypoints1, descriptors1 = orb.detectAndCompute(im1_gray, None)
@@ -25,7 +31,8 @@ def align_images(im1, im2):
     matcher = cv2.DescriptorMatcher_create(cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING)
     matches = matcher.match(descriptors1, descriptors2, None)
 
-    # Sort matches by score
+    # Sort matches by score (Convert to list first for compatibility with newer OpenCV)
+    matches = list(matches)
     matches.sort(key=lambda x: x.distance, reverse=False)
 
     # Remove not so good matches
@@ -60,6 +67,11 @@ def detect_defects(test_img, template_img, threshold=30):
     # Convert to grayscale
     test_gray = cv2.cvtColor(aligned_test, cv2.COLOR_BGR2GRAY)
     template_gray = cv2.cvtColor(template_img, cv2.COLOR_BGR2GRAY)
+    
+    # Apply CLAHE to mitigate lighting variations before absolute difference
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    test_gray = clahe.apply(test_gray)
+    template_gray = clahe.apply(template_gray)
     
     # Absolute difference
     diff = cv2.absdiff(test_gray, template_gray)

@@ -1,4 +1,4 @@
-path: /home/dilith_s_b_s/CVProject/e23-co5430-PCB-Bare-Board-Defect-Detection/data/processed
+path: /home/dilith_s_b_s/CVProject/data/processed
 train: images/train
 val: images/val
 

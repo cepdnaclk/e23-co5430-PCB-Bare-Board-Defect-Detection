@@ -1,6 +1,11 @@
+import sys
 import cv2
 import argparse
 from pathlib import Path
+
+# Add project root to sys.path so it can find 'src'
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from src.dl.inference import YOLOInferencePipeline
 from src.classical.template_matching import detect_defects
 import matplotlib.pyplot as plt
@@ -47,11 +52,16 @@ def main():
         boxes, scores, classes = pipeline.run_inference(test_img)
         result_img = draw_boxes(test_img, boxes, scores, classes, class_names)
         
-        plt.figure(figsize=(15, 10))
-        plt.imshow(cv2.cvtColor(result_img, cv2.COLOR_BGR2RGB))
-        plt.title(f"YOLO Defect Detection ({len(boxes)} defects found)")
-        plt.axis('off')
-        plt.show()
+        # Create output directory
+        test_img_name = Path(args.test_img).stem
+        project_root = Path(__file__).resolve().parent.parent.parent
+        out_dir = project_root / "outputs" / "dl" / test_img_name
+        out_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Save output image
+        out_path = out_dir / f"{test_img_name}_result.jpg"
+        cv2.imwrite(str(out_path), result_img)
+        print(f"Saved YOLO output to {out_path}")
         
     elif args.method == 'classical':
         print("Running Classical CV pipeline...")
@@ -71,18 +81,22 @@ def main():
             x, y, w, h = box
             cv2.rectangle(out_img, (x, y), (x+w, y+h), (0, 255, 0), 3)
             
-        fig, axs = plt.subplots(1, 3, figsize=(20, 8))
-        axs[0].imshow(cv2.cvtColor(aligned, cv2.COLOR_BGR2RGB))
-        axs[0].set_title("Aligned Test Image")
-        axs[1].imshow(mask, cmap='gray')
-        axs[1].set_title("Defect Mask")
-        axs[2].imshow(cv2.cvtColor(out_img, cv2.COLOR_BGR2RGB))
-        axs[2].set_title(f"Detected Defects ({len(bboxes)})")
+        # Create output directory
+        test_img_name = Path(args.test_img).stem
+        project_root = Path(__file__).resolve().parent.parent.parent
+        out_dir = project_root / "outputs" / "classical" / test_img_name
+        out_dir.mkdir(parents=True, exist_ok=True)
         
-        for ax in axs:
-            ax.axis('off')
-            
-        plt.show()
+        # Save individual images instead of a combined plot
+        aligned_path = out_dir / f"{test_img_name}_aligned.jpg"
+        mask_path = out_dir / f"{test_img_name}_mask.jpg"
+        result_path = out_dir / f"{test_img_name}_result.jpg"
+        
+        cv2.imwrite(str(aligned_path), aligned)
+        cv2.imwrite(str(mask_path), mask)
+        cv2.imwrite(str(result_path), out_img)
+        
+        print(f"Saved individual images to {out_dir}")
 
 if __name__ == "__main__":
     main()
