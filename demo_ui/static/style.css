@@ -1,0 +1,299 @@
+:root {
+    --bg-base: #0a0a0a;
+    --bg-panel: #111111;
+    --text-main: #e0e0e0;
+    --text-dim: #777777;
+    --accent-cyan: #00f0ff;
+    --accent-red: #ff003c;
+    --accent-green: #00ff00;
+    --border-color: #333333;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    line-height: 1.5;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Grid Background */
+.grid-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+        linear-gradient(var(--border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.terminal-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+}
+
+/* Headers */
+.sys-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--accent-cyan);
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+.sys-header h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.sys-header h1 span {
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-green);
+    border-radius: 50%;
+}
+
+.blinking {
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent-green); }
+    50% { opacity: 0.3; box-shadow: none; }
+}
+
+/* Panels */
+section {
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-panel);
+    padding: 20px;
+}
+
+.panel-header {
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-left: 3px solid var(--accent-cyan);
+    padding-left: 10px;
+}
+
+.panel-header.small {
+    font-size: 0.75rem;
+    border-left: 2px solid var(--text-dim);
+    color: var(--text-dim);
+}
+
+/* Controls */
+.radio-group {
+    display: flex;
+    gap: 20px;
+}
+
+.radio-btn {
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.radio-btn input {
+    opacity: 0;
+    position: absolute;
+}
+
+.radio-label {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    color: var(--text-dim);
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.radio-btn input:checked + .radio-label {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.radio-btn input:hover:not(:checked) + .radio-label {
+    border-color: var(--text-dim);
+}
+
+/* Dropzones */
+.dropzone-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.dropzone {
+    flex: 1;
+    height: 150px;
+    border: 1px dashed var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.dropzone:hover, .dropzone.dragover {
+    border-color: var(--accent-cyan);
+    background: rgba(0, 240, 255, 0.05);
+}
+
+.dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-dim);
+}
+
+.dropzone-content svg {
+    transition: stroke 0.2s;
+}
+
+.dropzone:hover .dropzone-content svg {
+    stroke: var(--accent-cyan);
+}
+
+.file-preview {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--bg-panel);
+    display: none;
+}
+
+.dropzone.has-file .file-preview {
+    display: block;
+}
+
+.dropzone.has-file .dropzone-content {
+    display: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Button */
+.action-btn {
+    width: 100%;
+    padding: 15px;
+    background: transparent;
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.action-btn:hover:not(:disabled) {
+    background: rgba(0, 240, 255, 0.1);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+}
+
+.action-btn:disabled {
+    border-color: var(--border-color);
+    color: var(--text-dim);
+    cursor: not-allowed;
+}
+
+/* Scanning Animation */
+.scan-line {
+    position: absolute;
+    top: -100%; left: 0; right: 0; height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.5), transparent);
+    animation: none;
+    pointer-events: none;
+}
+
+.action-btn.scanning .scan-line {
+    animation: scan 1.5s infinite linear;
+}
+
+@keyframes scan {
+    0% { top: -100%; }
+    100% { top: 100%; }
+}
+
+/* Output Area */
+.results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.result-item {
+    border: 1px solid var(--border-color);
+    padding: 10px;
+}
+
+.result-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+}
+
+.result-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid #222;
+}
+
+pre#execution-log {
+    background: rgba(0,0,0,0.5);
+    padding: 10px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    overflow-x: auto;
+    border: 1px solid #222;
+    white-space: pre-wrap;
+}

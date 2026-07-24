@@ -74,7 +74,10 @@ def evaluate_classical(raw_data_dir):
     import random
     
     raw_dir = Path(raw_data_dir)
-    image_paths = list(raw_dir.glob('images/*/*.jpg'))
+    # Check both the old structure and the new (YOLO-style) structure
+    image_paths = list(raw_dir.glob('valid/images/*.jpg'))
+    if not image_paths:
+        image_paths = list(raw_dir.glob('images/*/*.jpg'))
     
     # Sample 20 images to keep evaluation fast, 
     # since classical alignment is computationally heavy on full resolution
@@ -98,12 +101,35 @@ def evaluate_classical(raw_data_dir):
         if test_img is None or template_img is None:
             continue
             
+        gt_boxes = []
+        
+        # Check for YOLO format labels first (new dataset)
+        label_path_yolo = img_path.parent.parent / 'labels' / img_path.with_suffix('.txt').name
+        
+        # Fallback to old VOC format
         class_dir = img_path.parent.name
         xml_name = img_path.with_suffix('.xml').name
         xml_path = raw_dir / 'Annotations' / class_dir / xml_name
         
-        gt_boxes = []
-        if xml_path.exists():
+        if label_path_yolo.exists():
+            height, width = test_img.shape[:2]
+            with open(label_path_yolo, 'r') as f:
+                for line in f:
+                    parts = line.strip().split()
+                    if len(parts) >= 5:
+                        class_id = int(parts[0])
+                        x_center = float(parts[1]) * width
+                        y_center = float(parts[2]) * height
+                        w = float(parts[3]) * width
+                        h = float(parts[4]) * height
+                        
+                        x1 = x_center - (w / 2)
+                        y1 = y_center - (h / 2)
+                        x2 = x_center + (w / 2)
+                        y2 = y_center + (h / 2)
+                        
+                        gt_boxes.append([class_id, x1, y1, x2, y2])
+        elif xml_path.exists():
             gt_boxes = parse_voc_xml(str(xml_path)) # [class_id, x1, y1, x2, y2]
             
         try:
@@ -174,10 +200,10 @@ def evaluate_classical(raw_data_dir):
 if __name__ == "__main__":
     with open('configs/dataset.yaml', 'r') as f:
         config = yaml.safe_load(f)
-    raw_data_dir = config.get('raw_data_dir', '')
+    classical_data_dir = config.get('classical_data_dir', '')
     
     # Try to execute classical evaluation if data is found
-    evaluate_classical(raw_data_dir)
+    evaluate_classical(classical_data_dir)
     
     # We will temporarily comment out YOLO eval to test classical quickly
     # evaluate_yolo('runs/train/microinspect_yolo/weights/best.pt', 'configs/yolo_dataset.yaml')
