@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Toggle template dropzone based on method
     radioBtns.forEach(radio => {
         radio.addEventListener('change', (e) => {
-            if (e.target.value === 'classical') {
+            if (e.target.value === 'classical' || e.target.value === 'classical_topological') {
                 templateDropzone.classList.remove('hidden');
             } else {
                 templateDropzone.classList.add('hidden');
@@ -14,18 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Setup drag and drop functionality
-    setupDropzone('dropzone-test', 'file-test', 'preview-test');
-    setupDropzone('dropzone-template', 'file-template', 'preview-template');
+    setupDropzone('dropzone-test', 'file-test', 'preview-test', 'filename-test');
+    setupDropzone('dropzone-template', 'file-template', 'preview-template', 'filename-template');
 
     // Analyze button
     const btnAnalyze = document.getElementById('btn-analyze');
     btnAnalyze.addEventListener('click', runAnalysis);
 });
 
-function setupDropzone(dropzoneId, inputId, previewId) {
+function setupDropzone(dropzoneId, inputId, previewId, nameId) {
     const dropzone = document.getElementById(dropzoneId);
     const input = document.getElementById(inputId);
     const preview = document.getElementById(previewId);
+    const nameEl = document.getElementById(nameId);
 
     // Click to select
     dropzone.addEventListener('click', () => {
@@ -33,7 +34,7 @@ function setupDropzone(dropzoneId, inputId, previewId) {
     });
 
     input.addEventListener('change', () => {
-        if (input.files.length) handleFile(input.files[0], dropzone, preview);
+        if (input.files.length) handleFile(input.files[0], dropzone, preview, nameEl);
     });
 
     // Drag events
@@ -52,17 +53,18 @@ function setupDropzone(dropzoneId, inputId, previewId) {
         dropzone.classList.remove('dragover');
         if (e.dataTransfer.files.length) {
             input.files = e.dataTransfer.files; // assign files to input
-            handleFile(e.dataTransfer.files[0], dropzone, preview);
+            handleFile(e.dataTransfer.files[0], dropzone, preview, nameEl);
         }
     });
 }
 
-function handleFile(file, dropzone, preview) {
+function handleFile(file, dropzone, preview, nameEl) {
     if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (e) => {
             preview.style.backgroundImage = `url(${e.target.result})`;
             dropzone.classList.add('has-file');
+            if (nameEl) nameEl.textContent = file.name;
         };
         reader.readAsDataURL(file);
     }
@@ -79,8 +81,8 @@ async function runAnalysis() {
         return;
     }
     
-    if (method === 'classical' && !fileTemplate) {
-        alert("TEMPLATE_IMAGE required for classical method.");
+    if ((method === 'classical' || method === 'classical_topological') && !fileTemplate) {
+        alert("TEMPLATE_IMAGE required for classical methods.");
         return;
     }
 
@@ -92,7 +94,7 @@ async function runAnalysis() {
     const formData = new FormData();
     formData.append('method', method);
     formData.append('test_img', fileTest);
-    if (method === 'classical') {
+    if (method === 'classical' || method === 'classical_topological') {
         formData.append('template_img', fileTemplate);
     }
 
@@ -139,10 +141,12 @@ function displayResults(data) {
     
     if (data.method === 'dl') {
         const imgPath = data.outputs.result + `?t=${ts}`;
+        const name = data.outputs.result.split('/').pop();
         resultsContainer.innerHTML = `
             <div class="result-item">
                 <div class="result-label">RESULT_IMAGE</div>
                 <img class="result-image" src="${imgPath}" alt="Result">
+                <div style="text-align:center; margin-top:5px; font-family: monospace; color:#0f0;">${name}</div>
             </div>
         `;
     } else {
@@ -150,19 +154,26 @@ function displayResults(data) {
         const maskPath = data.outputs.mask + `?t=${ts}`;
         const alignedPath = data.outputs.aligned + `?t=${ts}`;
         
+        const rName = data.outputs.result.split('/').pop();
+        const mName = data.outputs.mask.split('/').pop();
+        const aName = data.outputs.aligned.split('/').pop();
+        
         resultsContainer.innerHTML = `
             <div class="result-item">
                 <div class="result-label">RESULT_IMAGE (BOUNDING BOXES)</div>
                 <img class="result-image" src="${resultPath}" alt="Result">
+                <div style="text-align:center; margin-top:5px; font-family: monospace; color:#0f0;">${rName}</div>
             </div>
             <div style="display: flex; gap: 20px;">
                 <div class="result-item" style="flex:1;">
                     <div class="result-label">MASK_IMAGE</div>
                     <img class="result-image" src="${maskPath}" alt="Mask">
+                    <div style="text-align:center; margin-top:5px; font-family: monospace; color:#0f0;">${mName}</div>
                 </div>
                 <div class="result-item" style="flex:1;">
                     <div class="result-label">ALIGNED_IMAGE</div>
                     <img class="result-image" src="${alignedPath}" alt="Aligned">
+                    <div style="text-align:center; margin-top:5px; font-family: monospace; color:#0f0;">${aName}</div>
                 </div>
             </div>
         `;

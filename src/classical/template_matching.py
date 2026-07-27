@@ -77,9 +77,10 @@ def align_images(im1, im2):
         
     return best_im1_reg, best_h
 
-def classify_defect(x, y, w, h, test_gray, template_gray):
+def classify_defect(x, y, w, h, cnt, test_gray, template_gray):
     """
     Heuristic rule-based classification based on Additive vs Subtractive intensity.
+    Uses shape analysis (Minimum Area Rectangle aspect ratio) to distinguish slim lines.
     """
     test_roi = test_gray[y:y+h, x:x+w]
     template_roi = template_gray[y:y+h, x:x+w]
@@ -88,8 +89,20 @@ def classify_defect(x, y, w, h, test_gray, template_gray):
     template_mean = np.mean(template_roi)
     
     if test_mean > template_mean:
-        # Additive Defect (Excess Copper). Mapping to Spurious_copper (5)
-        return 5
+        # Additive Defect (Excess Copper)
+        # Check if it's a slim line using the Minimum Area Rectangle
+        rect = cv2.minAreaRect(cnt)
+        (center_x, center_y), (rect_w, rect_h), angle = rect
+        
+        if rect_w > 0 and rect_h > 0:
+            aspect_ratio = max(rect_w, rect_h) / min(rect_w, rect_h)
+            if aspect_ratio > 3.0:
+                # It is a long, slim line
+                return 5  # Spurious_copper
+            else:
+                # It is a thicker blob/bridge
+                return 3  # Short
+        return 5 # Fallback
     else:
         # Subtractive Defect (Missing Copper). Mapping to Open_circuit (2)
         return 2
@@ -125,9 +138,9 @@ def detect_defects(test_img, template_img):
     bboxes_with_classes = []
     for cnt in contours:
         area = cv2.contourArea(cnt)
-        if area > 110:  # Minimum area to be considered a defect
+        if area > 130:
             x, y, w, h = cv2.boundingRect(cnt)
-            class_id = classify_defect(x, y, w, h, test_gray, template_gray)
+            class_id = classify_defect(x, y, w, h, cnt, test_gray, template_gray)
             bboxes_with_classes.append([x, y, w, h, class_id])
             
     return aligned_test, closed, bboxes_with_classes

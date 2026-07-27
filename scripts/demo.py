@@ -3,11 +3,15 @@ import cv2
 import argparse
 from pathlib import Path
 
+
+FONT_SIZE = 1.9
+
 # Add project root to sys.path so it can find 'src'
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from src.dl.inference import YOLOInferencePipeline
 from src.classical.template_matching import detect_defects
+from src.classical.template_matching_topological import detect_defects_topological
 import matplotlib.pyplot as plt
 
 def draw_boxes(img, boxes, scores, classes, class_names=None):
@@ -21,7 +25,7 @@ def draw_boxes(img, boxes, scores, classes, class_names=None):
         label = f"{name}: {score:.2f}"
         
         cv2.rectangle(out_img, (bx1, by1), (bx2, by2), (0, 0, 255), 3)
-        cv2.putText(out_img, label, (bx1, by1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+        cv2.putText(out_img, label, (bx1, by1 - 10), cv2.FONT_HERSHEY_SIMPLEX, FONT_SIZE, (0, 0, 255), 2)
         
     return out_img
 
@@ -29,7 +33,7 @@ def main():
     parser = argparse.ArgumentParser(description="MicroInspect Demo")
     parser.add_argument('--test_img', type=str, required=True, help="Path to test image")
     parser.add_argument('--template_img', type=str, help="Path to template image (for classical method)")
-    parser.add_argument('--method', type=str, choices=['dl', 'classical'], default='dl', help="Method to use")
+    parser.add_argument('--method', type=str, choices=['dl', 'classical', 'classical_topological'], default='dl', help="Method to use")
     parser.add_argument('--model', type=str, default='runs/train/microinspect_yolo/weights/best.pt', help="Path to YOLO model")
     
     args = parser.parse_args()
@@ -79,8 +83,9 @@ def main():
         # Classical heuristic groups defects into Subtractive (2) or Additive (5).
         # We display all possible types in the bounding box label.
         class_names = {
-            2: 'Missing Copper (Open Circuit/ Mouse Bite / Missing Hole)', 
-            5: 'Excess Copper (Short Circuit / Spur / Spurious Copper)'
+            2: 'Missing Copper (Open Circuit / Mouse Bite / Missing Hole)', 
+            3: 'Short Circuit (Thick Excess Copper)',
+            5: 'Spurious Copper (Slim Excess Copper)'
         }
         
         out_img = aligned.copy()
@@ -89,7 +94,7 @@ def main():
             cv2.rectangle(out_img, (x, y), (x+w, y+h), (0, 255, 0), 3)
             
             name = class_names.get(cls_id, str(cls_id))
-            cv2.putText(out_img, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+            cv2.putText(out_img, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, FONT_SIZE, (0, 255, 0), 2)
             
         # Create output directory
         test_img_name = Path(args.test_img).stem
@@ -98,6 +103,45 @@ def main():
         out_dir.mkdir(parents=True, exist_ok=True)
         
         # Save individual images instead of a combined plot
+        aligned_path = out_dir / f"{test_img_name}_aligned.jpg"
+        mask_path = out_dir / f"{test_img_name}_mask.jpg"
+        result_path = out_dir / f"{test_img_name}_result.jpg"
+        
+        cv2.imwrite(str(aligned_path), aligned)
+        cv2.imwrite(str(mask_path), mask)
+        cv2.imwrite(str(result_path), out_img)
+        
+        print(f"Saved individual images to {out_dir}")
+
+    elif args.method == 'classical_topological':
+        print("Running Classical CV pipeline with advanced Topological Classification...")
+        if not args.template_img:
+            print("Template image is required for classical method.")
+            return
+            
+        template_img = cv2.imread(args.template_img)
+        if template_img is None:
+            print("Could not read template image.")
+            return
+            
+        aligned, mask, bboxes = detect_defects_topological(test_img, template_img)
+        
+        class_names = {0: 'Missing_hole', 1: 'Mouse_bite', 2: 'Open_circuit', 3: 'Short', 4: 'Spur', 5: 'Spurious_copper'}
+        
+        out_img = aligned.copy()
+        for box in bboxes:
+            x, y, w, h, cls_id = box
+            cv2.rectangle(out_img, (x, y), (x+w, y+h), (0, 255, 0), 3)
+            
+            name = class_names.get(cls_id, str(cls_id))
+            cv2.putText(out_img, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, FONT_SIZE, (0, 255, 0), 2)
+            
+        # Create output directory
+        test_img_name = Path(args.test_img).stem
+        project_root = Path(__file__).resolve().parent.parent.parent
+        out_dir = project_root / "outputs" / "classical_topological" / test_img_name
+        out_dir.mkdir(parents=True, exist_ok=True)
+        
         aligned_path = out_dir / f"{test_img_name}_aligned.jpg"
         mask_path = out_dir / f"{test_img_name}_mask.jpg"
         result_path = out_dir / f"{test_img_name}_result.jpg"

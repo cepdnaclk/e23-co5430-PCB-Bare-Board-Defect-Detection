@@ -38,11 +38,11 @@ async def analyze(
     test_img: UploadFile = File(...),
     template_img: UploadFile = File(None)
 ):
-    if method not in ["dl", "classical"]:
-        raise HTTPException(status_code=400, detail="Invalid method. Choose 'dl' or 'classical'.")
+    if method not in ["dl", "classical", "classical_topological"]:
+        raise HTTPException(status_code=400, detail="Invalid method. Choose 'dl', 'classical', or 'classical_topological'.")
         
-    if method == "classical" and not template_img:
-        raise HTTPException(status_code=400, detail="Template image is required for the classical method.")
+    if method in ["classical", "classical_topological"] and not template_img:
+        raise HTTPException(status_code=400, detail="Template image is required for classical methods.")
         
     # Save uploaded test image
     test_img_path = TEMP_DIR / test_img.filename
@@ -50,7 +50,7 @@ async def analyze(
         shutil.copyfileobj(test_img.file, buffer)
         
     template_img_path = None
-    if method == "classical" and template_img:
+    if method in ["classical", "classical_topological"] and template_img:
         template_img_path = TEMP_DIR / template_img.filename
         with open(template_img_path, "wb") as buffer:
             shutil.copyfileobj(template_img.file, buffer)
@@ -81,6 +81,10 @@ async def analyze(
         outputs["result"] = f"/outputs/classical/{test_img_name}/{test_img_name}_result.jpg"
         outputs["mask"] = f"/outputs/classical/{test_img_name}/{test_img_name}_mask.jpg"
         outputs["aligned"] = f"/outputs/classical/{test_img_name}/{test_img_name}_aligned.jpg"
+    elif method == "classical_topological":
+        outputs["result"] = f"/outputs/classical_topological/{test_img_name}/{test_img_name}_result.jpg"
+        outputs["mask"] = f"/outputs/classical_topological/{test_img_name}/{test_img_name}_mask.jpg"
+        outputs["aligned"] = f"/outputs/classical_topological/{test_img_name}/{test_img_name}_aligned.jpg"
         
     return {
         "status": "success",
