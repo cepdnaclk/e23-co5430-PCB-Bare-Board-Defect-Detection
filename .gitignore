@@ -1,5 +1,6 @@
 # Python
 __pycache__/
+*/__pycache__/
 **/__pycache__/
 *.py[cod]
 **/*.py[cod]
@@ -59,3 +60,5 @@ classical_output.jpg
 
 # Logs
 *.log
+/src/classical/__pycache__
+/src/__pycache__

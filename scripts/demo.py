@@ -76,10 +76,20 @@ def main():
             
         aligned, mask, bboxes = detect_defects(test_img, template_img)
         
+        # Classical heuristic groups defects into Subtractive (2) or Additive (5).
+        # We display all possible types in the bounding box label.
+        class_names = {
+            2: 'Missing Copper (Open Circuit/ Mouse Bite / Missing Hole)', 
+            5: 'Excess Copper (Short Circuit / Spur / Spurious Copper)'
+        }
+        
         out_img = aligned.copy()
         for box in bboxes:
-            x, y, w, h = box
+            x, y, w, h, cls_id = box
             cv2.rectangle(out_img, (x, y), (x+w, y+h), (0, 255, 0), 3)
+            
+            name = class_names.get(cls_id, str(cls_id))
+            cv2.putText(out_img, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
             
         # Create output directory
         test_img_name = Path(args.test_img).stem
