@@ -78,23 +78,8 @@ def main():
         
         out_img = aligned.copy()
         for box in bboxes:
-            if len(box) == 5:
-                x, y, w, h, class_id = box
-            else:
-                x, y, w, h = box
-                class_id = 0
-                
-            # The classical heuristic groups defects into Subtractive (1) or Additive (5)
-            if class_id == 1:
-                name = "Missing_hole/Mouse_bite/Open_circuit"
-            elif class_id == 5:
-                name = "Short/Spur/Spurious_copper"
-            else:
-                name = "Unknown"
-                
+            x, y, w, h = box
             cv2.rectangle(out_img, (x, y), (x+w, y+h), (0, 255, 0), 3)
-            # Use a slightly smaller font (0.5) because the text string is long
-            cv2.putText(out_img, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             
         # Create output directory
         test_img_name = Path(args.test_img).stem

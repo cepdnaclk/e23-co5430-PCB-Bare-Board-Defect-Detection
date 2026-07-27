@@ -137,25 +137,16 @@ def evaluate_classical(raw_data_dir):
         except Exception:
             continue
             
-        pred_boxes_xyxy = []
-        for b in pred_boxes:
-            if len(b) == 5:
-                pred_boxes_xyxy.append([b[4], b[0], b[1], b[0]+b[2], b[1]+b[3]]) # class, x1, y1, x2, y2
-            else:
-                pred_boxes_xyxy.append([0, b[0], b[1], b[0]+b[2], b[1]+b[3]])
+        pred_boxes_xyxy = [[b[0], b[1], b[0]+b[2], b[1]+b[3]] for b in pred_boxes]
         
         matched_gt = set()
         for pb in pred_boxes_xyxy:
             match_found = False
-            pb_class = pb[0]
-            pb_coords = pb[1:]
             for i, gt in enumerate(gt_boxes):
                 if i in matched_gt:
                     continue
-                gt_class = gt[0]
-                gt_coords = gt[1:]
-                iou = compute_iou(pb_coords, gt_coords)
-                if iou > 0.5 and pb_class == gt_class:
+                iou = compute_iou(pb, gt[1:])
+                if iou > 0.5:
                     tp += 1
                     matched_gt.add(i)
                     match_found = True
