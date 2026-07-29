@@ -4,7 +4,7 @@ import yaml
 import torch
 import numpy as np
 from pathlib import Path
-from ultralytics.utils.metrics import bbox_iou
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -67,10 +67,10 @@ def compute_iou(boxA, boxB):
 
 def evaluate_classical(raw_data_dir):
     print("\n" + "="*50)
-    print("CLASSICAL CV EVALUATION METRICS")
+    print("CLASSICAL CV (TOPOLOGICAL) EVALUATION METRICS")
     print("="*50)
     
-    from src.classical.template_matching import detect_defects
+    from src.classical.template_matching_topological import detect_defects_topological as detect_defects
     import random
     
     raw_dir = Path(raw_data_dir)
@@ -79,13 +79,15 @@ def evaluate_classical(raw_data_dir):
     if not image_paths:
         image_paths = list(raw_dir.glob('images/*/*.jpg'))
     
-    # Sample 20 images to keep evaluation fast, 
+    if not image_paths:
+        print(f"  No images found in {raw_dir}. Check 'classical_data_dir' in configs/dataset.yaml.")
+        return
+
+    # Sample 20 images to keep evaluation fast,
     # since classical alignment is computationally heavy on full resolution
     random.seed(42)
     sample_paths = random.sample(image_paths, min(20, len(image_paths)))
-    
-    all_y_true = []
-    all_y_scores = []
+
     tp = fp = fn = 0
     
     print(f"Evaluating {len(sample_paths)} images...")
@@ -134,7 +136,8 @@ def evaluate_classical(raw_data_dir):
             
         try:
             aligned, mask, pred_boxes = detect_defects(test_img, template_img)
-        except Exception:
+        except Exception as e:
+            print(f"  Warning: inference failed on {img_path.name}: {e}")
             continue
             
         # pred_boxes is now [x, y, w, h, class_id]
@@ -159,19 +162,13 @@ def evaluate_classical(raw_data_dir):
                     tp += 1
                     matched_gt.add(i)
                     match_found = True
-                    all_y_true.append(1)
-                    all_y_scores.append(1.0) 
                     break
             if not match_found:
                 fp += 1
-                all_y_true.append(0)
-                all_y_scores.append(1.0)
                 
         for i in range(len(gt_boxes)):
             if i not in matched_gt:
                 fn += 1
-                all_y_true.append(1)
-                all_y_scores.append(0.0) 
                 
     end_time = time.time()
     
@@ -179,31 +176,29 @@ def evaluate_classical(raw_data_dir):
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0
     f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
     
-    print(f"mAP@0.5 (approx): {precision:.4f}")
     print(f"Precision:        {precision:.4f}")
     print(f"Recall:           {recall:.4f}")
     print(f"F1-Score:         {f1:.4f}")
+    print(f"TP: {tp}  FP: {fp}  FN: {fn}")
     print(f"Inference Speed (FPS on full res): {len(sample_paths) / (end_time - start_time):.2f}")
-    
-    if len(all_y_true) > 0:
-        from sklearn.metrics import precision_recall_curve, average_precision_score
-        import matplotlib.pyplot as plt
-        
-        p, r, _ = precision_recall_curve(all_y_true, all_y_scores)
-        ap = average_precision_score(all_y_true, all_y_scores)
-        
-        plt.figure(figsize=(8,6))
-        plt.step(r, p, where='post', color='blue', alpha=0.8, label=f'Classical Method AP={ap:.2f}')
-        plt.fill_between(r, p, step='post', alpha=0.2, color='blue')
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
-        plt.ylim([0.0, 1.05])
-        plt.xlim([0.0, 1.0])
-        plt.title('Precision-Recall Curve (Classical Method vs YOLO Baseline)')
-        plt.legend(loc='lower left')
-        plt.savefig('pr_curve_classical.jpg')
-        print("Saved PR curve to pr_curve_classical.jpg")
-        
+
+    # The classical pipeline produces binary detections with no confidence scores,
+    # so a full PR curve cannot be drawn. We plot the single operating point instead.
+    import matplotlib.pyplot as plt
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter([recall], [precision], s=200, color='blue', zorder=5,
+                label=f'Classical (Topological)  P={precision:.2f}  R={recall:.2f}  F1={f1:.2f}')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.ylim([0.0, 1.05])
+    plt.xlim([0.0, 1.0])
+    plt.title('Precision–Recall Operating Point: Classical Topological Method')
+    plt.legend(loc='lower left')
+    plt.grid(True, alpha=0.3)
+    plt.savefig('pr_curve_classical.jpg')
+    print("Saved PR operating-point chart to pr_curve_classical.jpg")
+
     print("="*50)
 
 if __name__ == "__main__":
