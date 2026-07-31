@@ -21,7 +21,6 @@ def train_yolo(config_path='configs/dataset.yaml', yolo_data_yaml='configs/yolo_
         epochs=epochs,
         batch=batch_size,
         imgsz=640,
-        device=0, # Assuming CUDA is available as per user requirements
         project='runs/train',
         name='microinspect_yolo',
         exist_ok=True,

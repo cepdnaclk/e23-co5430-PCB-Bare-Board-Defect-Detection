@@ -4,7 +4,11 @@ import torch
 from ultralytics import YOLO
 import torchvision
 
-class YOLOInferencePipeline:
+class BaseInferencePipeline:
+    def run_inference(self, img):
+        raise NotImplementedError("Subclasses must implement this method")
+
+class SingleStageYOLOPipeline(BaseInferencePipeline):
     def __init__(self, model_path, tile_size=640, overlap=0.15, conf_thresh=0.25, iou_thresh=0.45):
         self.model = YOLO(model_path)
         self.tile_size = tile_size
@@ -92,3 +96,25 @@ class YOLOInferencePipeline:
         final_classes = all_classes_tensor[keep_indices].numpy()
         
         return final_boxes, final_scores, final_classes
+
+class TwoStageYOLOPipeline(BaseInferencePipeline):
+    def __init__(self, yolo_model_path, classifier_model_path=None, tile_size=640, overlap=0.15, conf_thresh=0.25, iou_thresh=0.45):
+        # We will load YOLO here to do the cropping
+        self.yolo_model = YOLO(yolo_model_path)
+        self.classifier_model_path = classifier_model_path
+        self.tile_size = tile_size
+        self.overlap = overlap
+        self.conf_thresh = conf_thresh
+        self.iou_thresh = iou_thresh
+
+    def run_inference(self, img):
+        # TODO: Implement 1. YOLO Region Proposal -> 2. Crop -> 3. Pass to Custom CNN
+        raise NotImplementedError("Two-stage CNN classification coming soon")
+
+def get_inference_pipeline(method="single_stage", **kwargs):
+    if method == "single_stage":
+        return SingleStageYOLOPipeline(**kwargs)
+    elif method == "two_stage":
+        return TwoStageYOLOPipeline(**kwargs)
+    else:
+        raise ValueError(f"Unknown inference pipeline method: {method}")

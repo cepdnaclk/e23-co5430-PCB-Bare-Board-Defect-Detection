@@ -1,13 +1,13 @@
 # Dataset paths
-classical_data_dir: "/home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/Datasets/akhatova/pcb-defects/versions/1/PCB_DATASET"
-dl_data_dir: "/home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/Datasets/arnablaha05/deep-pcb/versions/1/PKU-Market-PCB(Data enhanced version)"
-processed_data_dir: "/home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/data/processed"
+classical_data_dir: "/new-home/e23/e23336/UoP/Sem_4/CO5430/CVProject/datasets/PCB_DATASET"
+dl_data_dir: "/new-home/e23/e23336/UoP/Sem_4/CO5430/CVProject/datasets/PKU-Market-PCB(Data enhanced version)"
+processed_data_dir: "/new-home/e23/e23336/UoP/Sem_4/CO5430/CVProject/data/processed"
 
 # Tiling parameters
 tile_size: 640
 overlap: 0.15
 
 # Training parameters
-batch_size: 16
-epochs: 50
+batch_size: 32
+epochs: 100
 model_name: "yolo11n.pt"

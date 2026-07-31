@@ -9,7 +9,7 @@ FONT_SIZE = 1.9
 # Add project root to sys.path so it can find 'src'
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from src.dl.inference import YOLOInferencePipeline
+from src.dl.inference import get_inference_pipeline
 from src.classical.template_matching import detect_defects
 from src.classical.template_matching_topological import detect_defects_topological
 import matplotlib.pyplot as plt
@@ -48,7 +48,7 @@ def main():
         class_names = {0: 'Missing_hole', 1: 'Mouse_bite', 2: 'Open_circuit', 3: 'Short', 4: 'Spur', 5: 'Spurious_copper'}
         
         try:
-            pipeline = YOLOInferencePipeline(args.model)
+            pipeline = get_inference_pipeline(method="single_stage", model_path=args.model)
         except Exception as e:
             print(f"Failed to load model: {e}")
             return
