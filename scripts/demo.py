@@ -34,7 +34,7 @@ def main():
     parser.add_argument('--test_img', type=str, required=True, help="Path to test image")
     parser.add_argument('--template_img', type=str, help="Path to template image (for classical method)")
     parser.add_argument('--method', type=str, choices=['dl', 'classical', 'classical_topological'], default='dl', help="Method to use")
-    parser.add_argument('--model', type=str, default='runs/train/microinspect_yolo/weights/best.pt', help="Path to YOLO model")
+    parser.add_argument('--model', type=str, default='runs/detect/runs/train/microinspect_yolo/weights/best.pt', help="Path to YOLO model")
     
     args = parser.parse_args()
     
