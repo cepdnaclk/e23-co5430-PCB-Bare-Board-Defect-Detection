@@ -1,0 +1,12 @@
+path: /home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/e23-co5430-PCB-Bare-Board-Defect-Detection/../data/processed
+train: train/images
+val: valid/images
+test: test/images
+nc: 6
+names:
+  0: Missing_hole
+  1: Mouse_bite
+  2: Open_circuit
+  3: Short
+  4: Spur
+  5: Spurious_copper

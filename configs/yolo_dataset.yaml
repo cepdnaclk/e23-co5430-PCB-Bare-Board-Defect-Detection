@@ -1,4 +1,4 @@
-path: /new-home/e23/e23336/UoP/Sem_4/CO5430/CVProject/datasets/PKU-Market-PCB(Data enhanced version)
+path: /home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/Datasets/arnablaha05/deep-pcb/versions/1/PKU-Market-PCB(Data enhanced version)
 train: train/images
 val: valid/images
 test: test/images
