@@ -21,11 +21,16 @@ def train_yolo(config_path='configs/dataset.yaml', yolo_data_yaml='configs/yolo_
         epochs=epochs,
         batch=batch_size,
         imgsz=640,
-        device=0, # Assuming CUDA is available as per user requirements
         project='runs/train',
         name='microinspect_yolo',
         exist_ok=True,
-        cache=True
+        cache=True,
+        mosaic=1.0,
+        mixup=0.2,
+        copy_paste=0.3,
+        auto_augment='randaugment',
+        optimizer='AdamW',
+        patience=20
     )
     
     print("Training completed. Results saved to runs/train/microinspect_yolo")

@@ -29,8 +29,11 @@ body {
 /* Grid Background */
 .grid-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image: 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
         linear-gradient(var(--border-color) 1px, transparent 1px),
         linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
     background-size: 40px 40px;
@@ -89,8 +92,17 @@ body {
 }
 
 @keyframes blink {
-    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent-green); }
-    50% { opacity: 0.3; box-shadow: none; }
+
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    50% {
+        opacity: 0.3;
+        box-shadow: none;
+    }
 }
 
 /* Panels */
@@ -143,13 +155,13 @@ section {
     font-size: 0.9rem;
 }
 
-.radio-btn input:checked + .radio-label {
+.radio-btn input:checked+.radio-label {
     border-color: var(--accent-cyan);
     color: var(--accent-cyan);
     box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2);
 }
 
-.radio-btn input:hover:not(:checked) + .radio-label {
+.radio-btn input:hover:not(:checked)+.radio-label {
     border-color: var(--text-dim);
 }
 
@@ -173,7 +185,8 @@ section {
     background: rgba(255, 255, 255, 0.02);
 }
 
-.dropzone:hover, .dropzone.dragover {
+.dropzone:hover,
+.dropzone.dragover {
     border-color: var(--accent-cyan);
     background: rgba(0, 240, 255, 0.05);
 }
@@ -196,7 +209,10 @@ section {
 
 .file-preview {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -247,7 +263,10 @@ section {
 /* Scanning Animation */
 .scan-line {
     position: absolute;
-    top: -100%; left: 0; right: 0; height: 100%;
+    top: -100%;
+    left: 0;
+    right: 0;
+    height: 100%;
     background: linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.5), transparent);
     animation: none;
     pointer-events: none;
@@ -258,8 +277,13 @@ section {
 }
 
 @keyframes scan {
-    0% { top: -100%; }
-    100% { top: 100%; }
+    0% {
+        top: -100%;
+    }
+
+    100% {
+        top: 100%;
+    }
 }
 
 /* Output Area */
@@ -289,7 +313,7 @@ section {
 }
 
 pre#execution-log {
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     padding: 10px;
     font-size: 0.8rem;
     color: var(--text-dim);
