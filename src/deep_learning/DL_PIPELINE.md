@@ -40,6 +40,18 @@ The core challenge in training this model is **Recall** and **Class Imbalance**.
 ### Execution
 The training loop utilizes Early Stopping (`patience=20`) to prevent overfitting. Once completed, the final optimized weights are automatically saved to `/runs/deep_learning/weights/` for use in the final Inference Engine.
 
----
+## 4. Milestone 3: Inference & Coordinate Remapping
 
-*(This document will be updated as we proceed to Milestone 3: Inference and Coordinate Remapping)*
+### The Final Boss: Closing the Loop
+Training a model on `640x640` crops is only half the battle. In a real-world industrial environment, the inspection camera hands us a single massive `3034x1586` image. The neural network cannot ingest this image directly, so we must reconstruct the result. Our final script (`predict.py`) handles this via a multi-stage remapping pipeline:
+
+1. **On-the-Fly Sliding Window Inference**: The script applies the exact same `640x640` sliding window logic (with a 15% overlap) that we used during data preparation. For a single high-resolution image, it dynamically generates all 18 crops and passes them sequentially through our trained YOLO model (`best.pt`).
+2. **Mathematical Coordinate Remapping**: Every time YOLO detects a defect, it outputs a bounding box relative to that specific `640x640` tile (e.g., `x=100, y=200`). The script calculates exactly where that `640x640` tile sits in the massive global image (e.g., `tile_x=2176, tile_y=946`) and adds them together (`global_x = 2276, global_y = 1146`). It maps every single microscopic defect back onto the global coordinate space!
+3. **Global Non-Maximum Suppression (NMS)**: Because our sliding windows overlap by 15%, a defect sitting on the border will be detected *twice* (once in the left tile, once in the right tile). We utilize PyTorch's `torchvision.ops.nms` algorithm to compute the Intersect-over-Union (IoU) of all global bounding boxes. Any duplicate boxes overlapping by more than 45% are merged, keeping only the detection with the highest confidence score.
+4. **Final High-Resolution Output**: The script draws all final, unique bounding boxes—color-coded by defect class—directly onto a fresh copy of the massive `3034x1586` original image and saves it to `/data/inference_results/`.
+
+### Execution
+You can test the entire pipeline on a raw, high-resolution test image using:
+```bash
+python3 src/deep_learning/predict.py --image path/to/huge_image.jpg
+```
