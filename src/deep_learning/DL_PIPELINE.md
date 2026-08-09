@@ -55,3 +55,23 @@ You can test the entire pipeline on a raw, high-resolution test image using:
 ```bash
 python3 src/deep_learning/predict.py --image path/to/huge_image.jpg
 ```
+
+---
+
+## 5. Training Metrics & Output Analysis
+When the YOLO training script (`train.py`) executes, it automatically generates a massive suite of analytics to help audit the model's performance. These files are saved to `runs/deep_learning/microinspect_v1/`.
+
+### Key Metrics to Monitor
+For Computer Vision object detection, raw "accuracy" is a poor metric (since 99% of a PCB is healthy background). Instead, we monitor the following:
+1. **Recall (R):** *Did the model find everything?* High Recall is critical for industrial inspection to ensure no microscopic defects slip through to production.
+2. **Precision (P):** *When the model makes a prediction, is it correct?* Low precision indicates the model is hallucinating and flagging healthy copper as defective (False Positives).
+3. **mAP50 (Mean Average Precision):** The standard benchmark for object detection, measuring overall health based on both Precision and Recall at an IoU threshold of 0.50.
+4. **Class Loss (`cls_loss`) & Box Loss (`box_loss`):** Box loss measures how tight and accurate the bounding boxes are. Class loss measures if the model is confusing defect types (e.g., labeling a "Spur" as a "Short").
+
+### Output File Breakdown
+- **`weights/best.pt`**: The core weights file from the epoch with the highest accuracy. Used by `predict.py` for inference.
+- **`results.png` & `results.csv`**: The master graph plotting all metrics (Precision, Recall, mAP50, Losses) across all 100 epochs. Look for loss curves trending down and metric curves plateauing at the top.
+- **`confusion_matrix.png`**: A heat-map grid showing how often the model confuses specific classes. A bright diagonal line indicates perfect classification. Off-diagonal bright spots pinpoint exactly which two defects the model struggles to differentiate.
+- **`val_batch0_labels.jpg` vs. `val_batch0_pred.jpg`**: A side-by-side visual comparison of the validation set. `labels` is the Ground Truth, and `pred` is the model's prediction. This is the best way to manually audit bounding box accuracy.
+- **`BoxPR_curve.png`**: The Precision-Recall Curve. It visually maps the trade-off between Precision and Recall. A curve hugging the top-right corner represents a highly successful model.
+- **`train_batch*.jpg`**: Visualizes the actual augmented images fed into the neural network during training, allowing you to confirm that `mosaic` and `mixup` augmentations are applying correctly.
