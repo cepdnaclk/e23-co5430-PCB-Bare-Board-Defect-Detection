@@ -15,7 +15,7 @@ class SingleStageYOLOPipeline(BaseInferencePipeline):
         self.overlap = overlap
         self.conf_thresh = conf_thresh
         self.iou_thresh = iou_thresh
-        
+
     def tile_image(self, img):
         h, w, _ = img.shape
         stride = int(self.tile_size * (1 - self.overlap))

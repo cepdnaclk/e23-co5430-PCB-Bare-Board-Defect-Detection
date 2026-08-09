@@ -1,4 +1,4 @@
-path: /home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/e23-co5430-PCB-Bare-Board-Defect-Detection/../data/processed
+path: /new-home/e23/e23336/UoP/Sem_4/CO5430/CVProject/e23-co5430-PCB-Bare-Board-Defect-Detection/../data/processed
 train: train/images
 val: valid/images
 test: test/images
