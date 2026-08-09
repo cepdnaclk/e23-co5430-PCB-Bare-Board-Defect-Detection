@@ -13,4 +13,5 @@ overlap: 0.15
 # Training parameters
 batch_size: 32
 epochs: 100
+
 model_name: "yolo11n.pt"
