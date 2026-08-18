@@ -8,7 +8,7 @@ from pathlib import Path
 import warnings
 warnings.filterwarnings('ignore')
 
-from src.dl.inference import YOLOInferencePipeline
+from src.dl.inference import get_inference_pipeline
 from src.data.tiler import parse_voc_xml, CLASS_MAP
 
 def evaluate_yolo(model_path, dataset_yaml_path):
@@ -35,7 +35,7 @@ def evaluate_yolo(model_path, dataset_yaml_path):
     
     # Calculate FPS on full size images
     print("\nMeasuring Inference Speed on Full-Res Images...")
-    pipeline = YOLOInferencePipeline(model_path, tile_size=640, overlap=0.15)
+    pipeline = get_inference_pipeline(method="single_stage", model_path=model_path, tile_size=640, overlap=0.15)
     
     # We will measure FPS on a dummy 4K image to simulate real PCB sizes
     dummy_img = np.zeros((3000, 4000, 3), dtype=np.uint8)

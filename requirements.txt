@@ -13,6 +13,8 @@ seaborn==0.13.2
 tqdm==4.68.4
 PyYAML==6.0.3
 
+kaggle
+
 fastapi
 uvicorn
 python-multipart

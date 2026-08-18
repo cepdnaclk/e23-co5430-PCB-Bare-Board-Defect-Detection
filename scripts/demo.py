@@ -9,7 +9,7 @@ FONT_SIZE = 1.9
 # Add project root to sys.path so it can find 'src'
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from src.dl.inference import YOLOInferencePipeline
+from src.dl.inference import get_inference_pipeline
 from src.classical.template_matching import detect_defects
 from src.classical.template_matching_topological import detect_defects_topological
 import matplotlib.pyplot as plt
@@ -34,7 +34,7 @@ def main():
     parser.add_argument('--test_img', type=str, required=True, help="Path to test image")
     parser.add_argument('--template_img', type=str, help="Path to template image (for classical method)")
     parser.add_argument('--method', type=str, choices=['dl', 'classical', 'classical_topological'], default='dl', help="Method to use")
-    parser.add_argument('--model', type=str, default='runs/train/microinspect_yolo/weights/best.pt', help="Path to YOLO model")
+    parser.add_argument('--model', type=str, default='runs/detect/runs/train/microinspect_yolo/weights/best.pt', help="Path to YOLO model")
     
     args = parser.parse_args()
     
@@ -48,7 +48,7 @@ def main():
         class_names = {0: 'Missing_hole', 1: 'Mouse_bite', 2: 'Open_circuit', 3: 'Short', 4: 'Spur', 5: 'Spurious_copper'}
         
         try:
-            pipeline = YOLOInferencePipeline(args.model)
+            pipeline = get_inference_pipeline(method="single_stage", model_path=args.model)
         except Exception as e:
             print(f"Failed to load model: {e}")
             return

@@ -33,7 +33,7 @@ env/
 .env
 
 # PyTorch / Ultralytics (YOLO)
-runs/
+# runs/
 *.pt
 *.pth
 yolov11n.pt
@@ -69,3 +69,4 @@ classical_output.jpg
 /generate_presentation.py
 /implementation_plan.md
 /presentation_structure.md
+=======
