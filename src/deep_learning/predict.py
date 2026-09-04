@@ -154,7 +154,7 @@ def predict_large_image(image_path: Path, model_path: Path, output_dir: Path,
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="MicroInspect YOLO Sliding Window Inference")
     parser.add_argument('--image', type=str, required=True, help="Path to high-resolution test image")
-    parser.add_argument('--weights', type=str, default='runs/deep_learning/microinspect_v1/weights/best.pt', help="Path to trained YOLO weights")
+    parser.add_argument('--weights', type=str, default='runs/deep_learning/microinspect_v2_medium/weights/best.pt', help="Path to trained YOLO weights")
     parser.add_argument('--output', type=str, default='data/inference_results', help="Output directory")
     
     args = parser.parse_args()
