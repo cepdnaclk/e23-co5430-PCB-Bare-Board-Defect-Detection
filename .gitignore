@@ -37,7 +37,6 @@ env/
 # runs/
 *.pt
 *.pth
-yolov11n.pt
 
 # Project Specific Directories
 outputs/
