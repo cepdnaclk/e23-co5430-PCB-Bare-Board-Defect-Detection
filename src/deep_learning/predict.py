@@ -88,7 +88,7 @@ def predict_large_image(image_path: Path, model_path: Path, output_dir: Path,
             tile = img[y1:y2, x1:x2]
             
             # Predict on this 640x640 tile
-            results = model(tile, verbose=False, conf=conf_thresh)
+            results = model(tile, verbose=False, conf=conf_thresh, augment=True)
             
             # 2. COORDINATE REMAPPING
             for r in results:
