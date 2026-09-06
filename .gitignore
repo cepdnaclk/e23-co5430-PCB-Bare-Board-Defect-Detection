@@ -24,6 +24,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*Zone.Identifier
 
 # Virtual environments
 venv/
@@ -36,7 +37,6 @@ env/
 # runs/
 *.pt
 *.pth
-yolov11n.pt
 
 # Project Specific Directories
 outputs/

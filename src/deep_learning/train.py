@@ -62,8 +62,8 @@ def train_model():
     # 1. Generate the data.yaml
     data_yaml_path = generate_tiled_data_yaml(project_root, tiled_data_dir)
     
-    # 2. Initialize the YOLO model (YOLOv11 nano for edge efficiency, can be changed to 's' or 'm')
-    model_name = 'yolo11n.pt'
+    # 2. Initialize the YOLO model (Upgraded to YOLOv11 Medium for complex feature extraction)
+    model_name = 'yolo11m.pt'
     logging.info(f"Initializing YOLO model: {model_name}")
     model = YOLO(model_name)
     
@@ -71,7 +71,7 @@ def train_model():
     # We heavily prioritize RECALL and handling Class Imbalance for microscopic defects.
     # Focal Loss (fl_gamma), Heavy Mosaic, and MixUp are critical here.
     epochs = 100
-    batch_size = 16
+    batch_size = 8  # Lowered from 16 to 8 to ensure the Medium model fits in GPU VRAM
     
     logging.info(f"Starting training for {epochs} epochs...")
     
@@ -82,7 +82,7 @@ def train_model():
             batch=batch_size,
             imgsz=640,
             project=str(project_root / 'runs' / 'deep_learning'),
-            name='microinspect_v1',
+            name='microinspect_v2_medium', # Saving to a new folder so we don't overwrite v1
             exist_ok=True,
             
             # --- HYPERPARAMETERS TUNED FOR MICROSCOPIC DEFECTS ---

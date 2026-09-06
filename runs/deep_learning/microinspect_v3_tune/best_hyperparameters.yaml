@@ -1,0 +1,31 @@
+# 6/30 iterations complete ✅ (91765.80s)
+# Results saved to /new-home/e23/e23336/UoP/Sem_4/CO5430/CVProject/e23-co5430-PCB-Bare-Board-Defect-Detection/runs/deep_learning/microinspect_v3_tune
+# Best fitness=0.76755 observed at iteration 5
+# Best fitness metrics are {'metrics/precision(B)': 0.97201, 'metrics/recall(B)': 0.90129, 'metrics/mAP50(B)': 0.92225, 'metrics/mAP50-95(B)': 0.76755, 'val/box_loss': 0.58082, 'val/cls_loss': 0.48216, 'val/dfl_loss': 0.99486, 'fitness': 0.76755}
+# Best fitness model is /new-home/e23/e23336/UoP/Sem_4/CO5430/CVProject/e23-co5430-PCB-Bare-Board-Defect-Detection/runs/deep_learning/microinspect_v3_tune/weights
+lr0: 1.0e-05
+lrf: 0.04778
+momentum: 0.86258
+weight_decay: 0.001
+warmup_epochs: 3.00537
+warmup_momentum: 0.70295
+box: 6.11041
+cls: 0.48452
+cls_pw: 0.00131
+dfl: 1.42614
+hsv_h: 0.01264
+hsv_s: 0.72508
+hsv_v: 0.27496
+degrees: 0.01058
+translate: 0.12924
+scale: 0.24212
+shear: 0.00619
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.51847
+bgr: 0.01598
+mosaic: 0.96553
+mixup: 0.00188
+cutmix: 0.00034
+copy_paste: 0.00915
+close_mosaic: 10
