@@ -58,7 +58,7 @@ def main():
         
         # Create output directory
         test_img_name = Path(args.test_img).stem
-        project_root = Path(__file__).resolve().parent.parent.parent
+        project_root = Path(__file__).resolve().parent.parent
         out_dir = project_root / "outputs" / "dl" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
@@ -98,7 +98,7 @@ def main():
             
         # Create output directory
         test_img_name = Path(args.test_img).stem
-        project_root = Path(__file__).resolve().parent.parent.parent
+        project_root = Path(__file__).resolve().parent.parent
         out_dir = project_root / "outputs" / "classical" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
@@ -138,7 +138,7 @@ def main():
             
         # Create output directory
         test_img_name = Path(args.test_img).stem
-        project_root = Path(__file__).resolve().parent.parent.parent
+        project_root = Path(__file__).resolve().parent.parent
         out_dir = project_root / "outputs" / "classical_topological" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
