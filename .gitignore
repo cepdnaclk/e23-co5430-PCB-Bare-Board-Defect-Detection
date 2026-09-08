@@ -46,7 +46,7 @@ runs/**/*.csv
 
 # Project Specific Directories
 # Ignore generated outputs but keep the placeholder so the directory exists on fresh clone
-outputs/*
+outputs/ablation*
 !outputs/.gitkeep
 temp/
 demo_ui/temp/
@@ -83,4 +83,4 @@ classical_output.jpg
 runs/deep_learning/train-2/
 runs/deep_learning/train/
 runs/deep_learning_yolo_medium/
-runs/deep_learning_yolo_nano/
+runs/deep_learning_yolo_nano/
