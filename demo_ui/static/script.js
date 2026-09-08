@@ -62,7 +62,7 @@ function handleFile(file, dropzone, preview, nameEl) {
     if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            preview.style.backgroundImage = `url(${e.target.result})`;
+            preview.src = e.target.result;
             dropzone.classList.add('has-file');
             if (nameEl) nameEl.textContent = file.name;
         };
