@@ -65,6 +65,7 @@ classical_output.jpg
 *.swp
 *.swo
 .DS_Store
+tempCodeRunnerFile.py
 
 # Logs
 *.log
