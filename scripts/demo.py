@@ -9,7 +9,7 @@ FONT_SIZE = 1.9
 # Add project root to sys.path so it can find 'src'
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from src.dl.inference import get_inference_pipeline
+from src.deep_learning.inference import get_inference_pipeline
 from src.classical.template_matching import detect_defects
 from src.classical.template_matching_topological import detect_defects_topological
 import matplotlib.pyplot as plt
