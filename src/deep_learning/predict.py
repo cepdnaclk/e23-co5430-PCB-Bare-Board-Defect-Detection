@@ -107,7 +107,7 @@ def predict_large_image(image_path: Path, model_path: Path, output_dir: Path,
                     
     if not global_predictions:
         logging.info("No defects found in this image.")
-        return
+        return []
         
     global_predictions = np.array(global_predictions)
     final_boxes = []
@@ -150,6 +150,8 @@ def predict_large_image(image_path: Path, model_path: Path, output_dir: Path,
     output_path = output_dir / f"{image_path.stem}_inference.jpg"
     cv2.imwrite(str(output_path), img_disp)
     logging.info(f"Saved final high-resolution inference image to: {output_path}")
+    
+    return final_boxes
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="MicroInspect YOLO Sliding Window Inference")
