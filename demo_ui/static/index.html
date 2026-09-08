@@ -4,84 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MicroInspect // Analysis Terminal</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="grid-overlay"></div>
-    
     <main class="terminal-container">
         <header class="sys-header">
-            <h1>MICROINSPECT <span>v1.0</span></h1>
-            <div class="status-indicator">
-                <span class="dot blinking"></span>
-                <span class="status-text">SYSTEM READY</span>
-            </div>
+            <h1><span class="logo-main">MicroInspect</span> <span class="version-text">v1.0</span></h1>
         </header>
 
         <section class="control-panel">
-            <div class="panel-header">MODE SELECTION</div>
+            <div class="panel-header">Mode Selection</div>
             <div class="radio-group">
                 <label class="radio-btn">
                     <input type="radio" name="method" value="dl" checked>
-                    <span class="radio-label">DEEP_LEARNING [YOLO]</span>
-                </label>
-                <label class="radio-btn">
-                    <input type="radio" name="method" value="classical">
-                    <span class="radio-label">CLASSICAL [TEMPLATE]</span>
+                    <span class="radio-label">Deep Learning (YOLO)</span>
                 </label>
                 <label class="radio-btn">
                     <input type="radio" name="method" value="classical_topological">
-                    <span class="radio-label">CLASSICAL [TOPOLOGICAL]</span>
+                    <span class="radio-label">Baseline (Topological classification)</span>
                 </label>
             </div>
         </section>
 
         <section class="input-panel">
-            <div class="panel-header">DATA INPUT</div>
+            <div class="panel-header">Image Upload</div>
             
             <div class="dropzone-container">
                 <div id="dropzone-test" class="dropzone">
                     <input type="file" id="file-test" accept="image/*" hidden>
                     <div class="dropzone-content">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        <span>INSERT TEST_IMAGE</span>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span>Upload Test Image</span>
                     </div>
-                    <div class="file-preview" id="preview-test"></div>
-                    <div class="file-name" id="filename-test" style="position: absolute; bottom: 5px; width: 100%; text-align: center; background: rgba(0,0,0,0.7); font-size: 0.8rem; padding: 2px 0;"></div>
+                    <img id="preview-test" class="file-preview" src="">
+                    <div class="file-name" id="filename-test" style="position: absolute; bottom: 0; width: 100%; text-align: center; background: rgba(0,0,0,0.75); color: white; font-size: 0.8rem; padding: 6px 0; font-family: 'JetBrains Mono', monospace;"></div>
                 </div>
 
                 <div id="dropzone-template" class="dropzone hidden">
                     <input type="file" id="file-template" accept="image/*" hidden>
                     <div class="dropzone-content">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        <span>INSERT TEMPLATE_IMAGE</span>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span>Upload Template Image</span>
                     </div>
-                    <div class="file-preview" id="preview-template"></div>
-                    <div class="file-name" id="filename-template" style="position: absolute; bottom: 5px; width: 100%; text-align: center; background: rgba(0,0,0,0.7); font-size: 0.8rem; padding: 2px 0;"></div>
+                    <img id="preview-template" class="file-preview" src="">
+                    <div class="file-name" id="filename-template" style="position: absolute; bottom: 0; width: 100%; text-align: center; background: rgba(0,0,0,0.75); color: white; font-size: 0.8rem; padding: 6px 0; font-family: 'JetBrains Mono', monospace;"></div>
                 </div>
             </div>
 
             <button id="btn-analyze" class="action-btn">
-                <span class="btn-text">INITIATE_SCAN()</span>
-                <div class="scan-line"></div>
+                <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span class="btn-text">Run Analysis</span>
             </button>
         </section>
 
         <section id="output-panel" class="output-panel hidden">
-            <div class="panel-header">ANALYSIS OUTPUT <span id="output-method"></span></div>
+            <div class="panel-header">Analysis Results <span id="output-method" style="color: var(--accent-primary); font-weight: normal; margin-left: 8px;"></span></div>
             <div id="results-container" class="results-container">
                 <!-- Results populated by JS -->
             </div>
             <div class="log-container">
-                <div class="panel-header small">EXECUTION_LOG</div>
+                <div class="panel-header small">Execution Log</div>
                 <pre id="execution-log"></pre>
             </div>
         </section>
     </main>
 
-    <script src="/static/script.js"></script>
+    <script src="/static/script.js?v=6"></script>
 </body>
 </html>
