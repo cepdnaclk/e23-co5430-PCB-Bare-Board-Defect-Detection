@@ -62,9 +62,11 @@ e23-co5430-PCB-Bare-Board-Defect-Detection/
     │   ├── prepare_data.py        # Tile high-res images → YOLO dataset
     │   ├── train.py               # Train YOLOv11 model
     │   ├── predict.py             # Sliding-window inference on a single image
-    │   └── tune.py                # Genetic algorithm hyperparameter tuning
-    └── dl/
-        └── inference.py           # Inference pipeline class (used by demo & UI)
+    │   ├── tune.py                # Genetic algorithm hyperparameter tuning
+    │   └── inference.py           # Inference pipeline class (used by demo & UI)
+├── docs/                         # Detailed project documentation
+│   ├── DL_PIPELINE.md            # Deep Learning architecture breakdown
+│   └── YOLO_OUTPUT_EXPLAINED.md  # Training metrics and graphs explained
 ```
 
 ---
@@ -165,6 +167,8 @@ Training logs and model weights are saved to `runs/deep_learning/microinspect_v2
 
 > The best trained weights will be at:  
 > `runs/deep_learning/microinspect_v2_medium/weights/best.pt`
+
+> **Note on Model Weights:** The `.pt` weight files are too large for GitHub and are excluded from the repository. To run inference immediately without training, please download the pre-trained `best.pt` file using the links provided in [`runs/deep_learning/microinspect_v2_medium/weights/weight_files.md`](runs/deep_learning/microinspect_v2_medium/weights/weight_files.md) and place it in that directory.
 
 **Optional — Hyperparameter Tuning (expensive):**
 ```bash
@@ -283,6 +287,14 @@ A **YOLOv11-Medium** model trained on 640×640 tiles of the DeepPCB dataset. Inf
 | 3 | `Short` | Additive | Excess copper that incorrectly bridges two distinct traces |
 | 4 | `Spur` | Additive | A protrusion of excess copper attached to a single trace |
 | 5 | `Spurious_copper` | Additive | An isolated island of excess copper not touching any traces |
+
+---
+
+## Detailed Documentation
+
+For a deeper dive into the architecture and training outputs, please see the supplementary documentation in the `docs/` folder:
+- [`docs/DL_PIPELINE.md`](docs/DL_PIPELINE.md) — Detailed breakdown of the Deep Learning tiling, inference, and global coordinate remapping pipeline.
+- [`docs/YOLO_OUTPUT_EXPLAINED.md`](docs/YOLO_OUTPUT_EXPLAINED.md) — A comprehensive guide explaining the metrics, PR curves, and graphs generated during YOLOv11 training.
 
 ---
 
