@@ -46,8 +46,9 @@ runs/**/*.csv
 
 # Project Specific Directories
 # Ignore generated outputs but keep the placeholder so the directory exists on fresh clone
-outputs/ablation*
+outputs/*
 !outputs/.gitkeep
+!outputs/dl-evaluation/
 temp/
 demo_ui/temp/
 agent/
