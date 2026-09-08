@@ -59,7 +59,7 @@ def main():
         # Create output directory
         test_img_name = Path(args.test_img).stem
         project_root = Path(__file__).resolve().parent.parent
-        out_dir = project_root / "outputs" / "dl" / test_img_name
+        out_dir = project_root / "ui_results" / "dl" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
         # Save output image
@@ -99,7 +99,7 @@ def main():
         # Create output directory
         test_img_name = Path(args.test_img).stem
         project_root = Path(__file__).resolve().parent.parent
-        out_dir = project_root / "outputs" / "classical" / test_img_name
+        out_dir = project_root / "ui_results" / "classical" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
         # Save individual images instead of a combined plot
@@ -139,7 +139,7 @@ def main():
         # Create output directory
         test_img_name = Path(args.test_img).stem
         project_root = Path(__file__).resolve().parent.parent
-        out_dir = project_root / "outputs" / "classical_topological" / test_img_name
+        out_dir = project_root / "ui_results" / "classical_topological" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
         aligned_path = out_dir / f"{test_img_name}_aligned.jpg"

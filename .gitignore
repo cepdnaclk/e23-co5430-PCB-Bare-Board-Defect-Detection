@@ -52,6 +52,7 @@ outputs/*
 temp/
 demo_ui/temp/
 agent/
+ui_results
 
 # Root level images and plots
 /*.jpg
@@ -66,6 +67,7 @@ classical_output.jpg
 *.swp
 *.swo
 .DS_Store
+tempCodeRunnerFile.py
 
 # Logs
 *.log
