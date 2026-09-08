@@ -13,8 +13,8 @@ app = FastAPI(title="MicroInspect UI")
 # Base paths
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
-# demo.py saves outputs to the parent of PROJECT_ROOT (CVProject/outputs)
-OUTPUTS_DIR = PROJECT_ROOT.parent / "outputs"
+# demo.py saves outputs inside the project root under outputs/
+OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 TEMP_DIR = BASE_DIR / "temp"
 
 # Ensure directories exist
