@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MicroInspect // Analysis Terminal</title>
-    <link rel="stylesheet" href="/static/style.css?v=4">
+    <link rel="stylesheet" href="/static/style.css?v=7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
@@ -12,11 +12,7 @@
 <body>
     <main class="terminal-container">
         <header class="sys-header">
-            <h1>MicroInspect <span>v1.0</span></h1>
-            <div class="status-indicator">
-                <span class="dot"></span>
-                <span class="status-text">System Ready</span>
-            </div>
+            <h1><span class="logo-main">MicroInspect</span> <span class="version-text">v1.0</span></h1>
         </header>
 
         <section class="control-panel">
@@ -43,7 +39,7 @@
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                         <span>Upload Test Image</span>
                     </div>
-                    <div class="file-preview" id="preview-test"></div>
+                    <img id="preview-test" class="file-preview" src="">
                     <div class="file-name" id="filename-test" style="position: absolute; bottom: 0; width: 100%; text-align: center; background: rgba(0,0,0,0.75); color: white; font-size: 0.8rem; padding: 6px 0; font-family: 'JetBrains Mono', monospace;"></div>
                 </div>
 
@@ -53,7 +49,7 @@
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                         <span>Upload Template Image</span>
                     </div>
-                    <div class="file-preview" id="preview-template"></div>
+                    <img id="preview-template" class="file-preview" src="">
                     <div class="file-name" id="filename-template" style="position: absolute; bottom: 0; width: 100%; text-align: center; background: rgba(0,0,0,0.75); color: white; font-size: 0.8rem; padding: 6px 0; font-family: 'JetBrains Mono', monospace;"></div>
                 </div>
             </div>
@@ -76,6 +72,6 @@
         </section>
     </main>
 
-    <script src="/static/script.js?v=4"></script>
+    <script src="/static/script.js?v=6"></script>
 </body>
 </html>

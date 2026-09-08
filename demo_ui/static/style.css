@@ -19,7 +19,11 @@
 }
 
 body {
-    background-color: var(--bg-base);
+    background-color: #f8fafc;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(147, 51, 234, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
     color: var(--text-main);
     font-family: var(--font-main);
     line-height: 1.6;
@@ -47,41 +51,28 @@ body {
 }
 
 .sys-header h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.sys-header h1 span {
-    font-size: 0.8rem;
-    background: var(--accent-primary);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-weight: 500;
-}
-
-.status-indicator {
-    display: flex;
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.85rem;
-    color: var(--text-dim);
-    font-weight: 500;
+    padding: 2px 0;
 }
 
-.dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--accent-success);
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--accent-success);
+.logo-main {
+    background: linear-gradient(135deg, #2563eb, #9333ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* Panels */
+.version-text {
+    -webkit-text-stroke: 1.5px #9333ea;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+
 section {
     padding: 32px;
     border-bottom: 1px solid var(--border-color);
@@ -157,7 +148,8 @@ section:last-child {
 
 .dropzone {
     flex: 1;
-    height: 200px;
+    min-height: 200px;
+    height: auto;
     border: 2px dashed var(--border-color);
     border-radius: var(--border-radius);
     display: flex;
@@ -194,13 +186,11 @@ section:last-child {
 }
 
 .file-preview {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: #f1f5f9;
+    width: 100%;
+    height: auto;
     display: none;
+    border-radius: 8px;
+    object-fit: contain;
 }
 
 .dropzone.has-file .file-preview {
