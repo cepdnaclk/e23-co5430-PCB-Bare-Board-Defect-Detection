@@ -75,4 +75,13 @@ classical_output.jpg
 /PROJECT PROPOSAL - MicroInspect.pdf
 /data/
 /generate_presentation.py
-/m3_present.md
+/m3_present.md
+/implementation_plan.md
+/presentation_structure.md
+
+# Ignore obsolete training run directories
+runs/deep_learning/microinspect_v1/
+runs/deep_learning/train-2/
+runs/deep_learning/train/
+runs/deep_learning_yolo_medium/
+runs/deep_learning_yolo_nano/
