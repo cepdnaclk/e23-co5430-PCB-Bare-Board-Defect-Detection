@@ -51,6 +51,7 @@ outputs/ablation*
 temp/
 demo_ui/temp/
 agent/
+ui_results
 
 # Root level images and plots
 /*.jpg
