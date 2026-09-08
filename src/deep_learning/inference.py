@@ -53,8 +53,7 @@ class SingleStageYOLOPipeline(BaseInferencePipeline):
         # Run inference on each tile
         for idx, tile in enumerate(tiles):
             x1_offset, y1_offset, _, _ = coords[idx]
-            
-            results = self.model(tile, conf=self.conf_thresh, verbose=False)[0]
+            results = self.model(tile, conf=self.conf_thresh, verbose=False, augment=True)[0]
             
             # Map bounding boxes back to original image coordinates
             if len(results.boxes) > 0:

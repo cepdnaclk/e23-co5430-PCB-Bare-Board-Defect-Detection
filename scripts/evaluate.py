@@ -8,7 +8,7 @@ from pathlib import Path
 import warnings
 warnings.filterwarnings('ignore')
 
-from src.dl.inference import get_inference_pipeline
+from src.deep_learning.inference import get_inference_pipeline
 from src.data.tiler import parse_voc_xml, CLASS_MAP
 
 def evaluate_yolo(model_path, dataset_yaml_path):
