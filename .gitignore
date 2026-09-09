@@ -49,6 +49,7 @@ runs/**/*.csv
 outputs/*
 !outputs/.gitkeep
 !outputs/dl-evaluation/
+!outputs/Examples/
 temp/
 demo_ui/temp/
 agent/
