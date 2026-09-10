@@ -9,6 +9,7 @@ import os
 import yaml
 import logging
 from pathlib import Path
+# pyrefly: ignore [missing-import]
 from ultralytics import YOLO
 
 # Configure logging
