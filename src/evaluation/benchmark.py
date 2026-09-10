@@ -86,8 +86,15 @@ def evaluate_predictions_with_classes(preds, gt_boxes, iou_thresh=0.5):
     return y_true, y_pred
 
 def run_benchmark():
-    # Paths
-    pku_root = Path('/home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/Datasets/arnablaha05/deep-pcb/versions/1/PKU-Market-PCB(Data enhanced version)')
+    # Paths — read from the shared config file so this works on any machine
+    import yaml
+    config_path = project_root / 'configs' / 'dataset.yaml'
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+
+    pku_root = Path(config.get('dl_data_dir', 'data/raw/PKU-Market-PCB'))
+    if not pku_root.is_absolute():
+        pku_root = project_root / pku_root
     test_img_dir = pku_root / 'test' / 'images'
     test_label_dir = pku_root / 'test' / 'labels'
     template_dir = pku_root / 'PCB_USED'

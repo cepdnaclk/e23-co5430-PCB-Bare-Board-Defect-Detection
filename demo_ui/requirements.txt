@@ -1,7 +1,0 @@
-# This file is intentionally a redirect.
-# All dependencies (including fastapi, uvicorn, python-multipart) are managed
-# from the root requirements.txt. Please install from there:
-#
-#   pip install -r ../requirements.txt
-#
-# Do NOT install from this file directly; it does not include pinned versions.
