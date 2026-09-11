@@ -1,0 +1,36 @@
+{
+    "team": [
+        {
+            "name": "S.M.D.S.B. Samarakoon",
+            "email": "e23336@eng.pdn.ac.lk",
+            "eNumber": "E/23/336"
+        },
+        {
+            "name": "G.P.M. Gamage",
+            "email": "e23104@eng.pdn.ac.lk",
+            "eNumber": "E/23/104"
+        },
+        {
+            "name": "P.I.N. Bandara",
+            "email": "e23035@eng.pdn.ac.lk",
+            "eNumber": "E/23/035"
+        },
+        {
+            "name": "W.R.A.D.N. Gunathilake",
+            "email": "e23117@eng.pdn.ac.lk",
+            "eNumber": "E/23/117"
+        }
+    ],
+    "tags": [
+        "Computer Vision",
+        "Deep Learning",
+        "Bare-board PCB Defect Detection",
+        "Defect Detection",
+        "PCB Inspection",
+        "Quality Assurance",
+        "PCB",
+        "CO5430"
+    ],
+    "image": "cover_page.jpg",
+    "thumbnail": "thumbnail.jpg"
+}

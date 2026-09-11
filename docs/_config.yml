@@ -1,0 +1,13 @@
+# This theme is based on https://github.com/jekyll/minima
+# Please refer above link to know the available configurations
+
+title: "MicroInspect — Bare-Board PCB Defect Detection"
+remote_theme: cepdnaclk/eYY-project-theme
+description: "Bare-Board PCB Defect Detection using Classical Computer Vision & Deep Learning"
+markdown: kramdown
+
+kramdown:
+  parse_block_html: true
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
