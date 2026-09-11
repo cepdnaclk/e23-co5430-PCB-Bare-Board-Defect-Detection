@@ -292,9 +292,7 @@ A **YOLOv11-Medium** model trained on 640×640 tiles of the DeepPCB dataset. Inf
 
 ## Detailed Documentation
 
-For a deeper dive into the architecture and training outputs, please see the supplementary documentation in the `docs/` folder:
-- [`docs/DL_PIPELINE.md`](docs/DL_PIPELINE.md) — Detailed breakdown of the Deep Learning tiling, inference, and global coordinate remapping pipeline.
-- [`docs/YOLO_OUTPUT_EXPLAINED.md`](docs/YOLO_OUTPUT_EXPLAINED.md) — A comprehensive guide explaining the metrics, PR curves, and graphs generated during YOLOv11 training.
+For a comprehensive dive into the architecture, experimental results, and a detailed breakdown of both the Classical and Deep Learning pipelines, please visit our **[Project Documentation Page](./docs/README.md)**.
 
 ---
 
