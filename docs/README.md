@@ -251,6 +251,8 @@ This allows the classical method to distinguish defects based on **structural re
 
 # Deep Learning Approach
 
+![Deep Learning Pipeline](./images/dl_pipeline.png)
+
 The deep-learning pipeline uses **YOLOv11-Medium** for object detection.
 
 The final Medium training configuration uses:
