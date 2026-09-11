@@ -1,0 +1,32 @@
+{
+    "team": [
+        {
+            "name": "Team Member 1",
+            "email": "email@example.com",
+            "eNumber": "E/23/XXX"
+        },
+        {
+            "name": "Team Member 2",
+            "email": "email@example.com",
+            "eNumber": "E/23/XXX"
+        },
+        {
+            "name": "Team Member 3",
+            "email": "email@example.com",
+            "eNumber": "E/23/XXX"
+        },
+        {
+            "name": "Team Member 4",
+            "email": "email@example.com",
+            "eNumber": "E/23/XXX"
+        }
+    ],
+    "tags": [
+        "Computer Vision",
+        "Deep Learning",
+        "PCB Defect Detection",
+        "CO5430"
+    ],
+    "image": "cover_page.jpg",
+    "thumbnail": "thumbnail.jpg"
+}
