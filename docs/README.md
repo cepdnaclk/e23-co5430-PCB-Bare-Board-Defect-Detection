@@ -113,7 +113,7 @@ A **15% tile overlap** is used to reduce the probability of defects being split 
 | **Spur** | An unwanted copper protrusion extends from a legitimate conductive trace. |
 | **Spurious Copper** | An isolated region of unwanted copper exists where no conductive feature should be present. |
 
-<!-- ![PCB Defect Classes](./images/defect_classes.png) -->
+![PCB Defect Classes](./images/defect_classes.png)
 
 ---
 
@@ -126,8 +126,6 @@ MicroInspect consists of three main inspection modes exposed through a common de
 3. **Deep Learning**
 
 The classical topological pipeline is the primary classical approach used for comparison because it incorporates structural information about PCB connectivity rather than relying only on pixel-level differences.
-
-![System Architecture](./images/architecture.png)
 
 ### Overall Processing Flow
 
@@ -305,7 +303,7 @@ High-Resolution PCB
 
 The preprocessing pipeline uses 640 × 640 tiles with 15% overlap. Defect bounding boxes are converted into tile-local coordinates and retained when sufficient portions of the defect fall within the tile.
 
-<!-- ![Tiling Pipeline](./images/tiling.png) -->
+![Tiling Pipeline](./images/tiling.png)
 
 ---
 
@@ -425,7 +423,7 @@ Supported methods include:
 
 The system processes the selected image and presents the generated inspection outputs.
 
-<!-- ![MicroInspect Demonstration Interface](./images/ui.png) -->
+![MicroInspect Demonstration Interface](./images/ui.png)
 
 The interface provides a practical way to demonstrate and compare the inspection approaches without requiring users to directly interact with the underlying Python implementation.
 
