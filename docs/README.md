@@ -12,12 +12,10 @@ title: MicroInspect — Bare-Board PCB Defect Detection
 
 ## Team
 
-- **E/23/XXX**, [Team Member 1], [email](email@example.com)
-- **E/23/XXX**, [Team Member 2], [email](email@example.com)
-- **E/23/XXX**, [Team Member 3], [email](email@example.com)
-- **E/23/XXX**, [Team Member 4], [email](email@example.com)
-
-<!-- Replace the placeholders above with the actual team information. -->
+- **E/23/336**, S.M.D.S.B. Samarakoon, [email](mailto:e23336@eng.pdn.ac.lk)
+- **E/23/104**, G.P.M. Gamage, [email](mailto:e23104@eng.pdn.ac.lk)
+- **E/23/035**, P.I.N. Bandara, [email](mailto:e23035@eng.pdn.ac.lk)
+- **E/23/117**, W.R.A.D.N. Gunathilake, [email](mailto:e23117@eng.pdn.ac.lk)
 
 ![MicroInspect](./data/cover_page.jpg)
 
