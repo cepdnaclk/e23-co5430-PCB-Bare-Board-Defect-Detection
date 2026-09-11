@@ -144,7 +144,7 @@ def process_dataset(config_path):
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
         
-    raw_dir = Path(config['raw_data_dir'])
+    raw_dir = Path(config['classical_data_dir'])
     processed_dir = Path(config['processed_data_dir'])
     
     tile_size = config.get('tile_size', 640)

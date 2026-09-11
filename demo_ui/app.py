@@ -13,8 +13,8 @@ app = FastAPI(title="MicroInspect UI")
 # Base paths
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
-# demo.py saves outputs to the parent of PROJECT_ROOT (CVProject/outputs)
-OUTPUTS_DIR = PROJECT_ROOT.parent / "outputs"
+# demo.py saves outputs inside the project root under ui_results/
+OUTPUTS_DIR = PROJECT_ROOT / "ui_results"
 TEMP_DIR = BASE_DIR / "temp"
 
 # Ensure directories exist
@@ -23,7 +23,7 @@ TEMP_DIR.mkdir(parents=True, exist_ok=True)
 (BASE_DIR / "static").mkdir(parents=True, exist_ok=True)
 
 # Mount outputs directory to serve result images
-app.mount("/outputs", StaticFiles(directory=str(OUTPUTS_DIR)), name="outputs")
+app.mount("/ui_results", StaticFiles(directory=str(OUTPUTS_DIR)), name="ui_results")
 
 # Mount static directory for HTML/CSS/JS
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
@@ -75,16 +75,16 @@ async def analyze(
     outputs = {}
     
     if method == "dl":
-        result_path = f"/outputs/dl/{test_img_name}/{test_img_name}_result.jpg"
+        result_path = f"/ui_results/dl/{test_img_name}/{test_img_name}_result.jpg"
         outputs["result"] = result_path
     elif method == "classical":
-        outputs["result"] = f"/outputs/classical/{test_img_name}/{test_img_name}_result.jpg"
-        outputs["mask"] = f"/outputs/classical/{test_img_name}/{test_img_name}_mask.jpg"
-        outputs["aligned"] = f"/outputs/classical/{test_img_name}/{test_img_name}_aligned.jpg"
+        outputs["result"] = f"/ui_results/classical/{test_img_name}/{test_img_name}_result.jpg"
+        outputs["mask"] = f"/ui_results/classical/{test_img_name}/{test_img_name}_mask.jpg"
+        outputs["aligned"] = f"/ui_results/classical/{test_img_name}/{test_img_name}_aligned.jpg"
     elif method == "classical_topological":
-        outputs["result"] = f"/outputs/classical_topological/{test_img_name}/{test_img_name}_result.jpg"
-        outputs["mask"] = f"/outputs/classical_topological/{test_img_name}/{test_img_name}_mask.jpg"
-        outputs["aligned"] = f"/outputs/classical_topological/{test_img_name}/{test_img_name}_aligned.jpg"
+        outputs["result"] = f"/ui_results/classical_topological/{test_img_name}/{test_img_name}_result.jpg"
+        outputs["mask"] = f"/ui_results/classical_topological/{test_img_name}/{test_img_name}_mask.jpg"
+        outputs["aligned"] = f"/ui_results/classical_topological/{test_img_name}/{test_img_name}_aligned.jpg"
         
     return {
         "status": "success",
