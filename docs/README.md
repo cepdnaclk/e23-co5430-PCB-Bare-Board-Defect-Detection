@@ -115,7 +115,7 @@ A **15% tile overlap** is used to reduce the probability of defects being split 
 | **Spur** | An unwanted copper protrusion extends from a legitimate conductive trace. |
 | **Spurious Copper** | An isolated region of unwanted copper exists where no conductive feature should be present. |
 
-![PCB Defect Classes](./images/defect_classes.png)
+<!-- ![PCB Defect Classes](./images/defect_classes.png) -->
 
 ---
 
@@ -210,7 +210,7 @@ Pixel differences alone are insufficient to reliably distinguish all six defect 
 
 MicroInspect therefore introduces **topological reasoning** based on how the detected region interacts with PCB copper structures.
 
-![Topological Reasoning](./images/topology_reasoning.png)
+<!-- ![Topological Reasoning](./images/topology_reasoning.png) -->
 
 The classification logic can be summarized as follows:
 
@@ -307,7 +307,7 @@ High-Resolution PCB
 
 The preprocessing pipeline uses 640 × 640 tiles with 15% overlap. Defect bounding boxes are converted into tile-local coordinates and retained when sufficient portions of the defect fall within the tile.
 
-![Tiling Pipeline](./images/tiling.png)
+<!-- ![Tiling Pipeline](./images/tiling.png) -->
 
 ---
 
@@ -427,7 +427,7 @@ Supported methods include:
 
 The system processes the selected image and presents the generated inspection outputs.
 
-![MicroInspect Demonstration Interface](./images/ui.png)
+<!-- ![MicroInspect Demonstration Interface](./images/ui.png) -->
 
 The interface provides a practical way to demonstrate and compare the inspection approaches without requiring users to directly interact with the underlying Python implementation.
 
