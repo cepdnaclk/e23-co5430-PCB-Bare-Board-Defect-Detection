@@ -1,13 +1,37 @@
-# Dataset paths
-classical_data_dir: "/home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/Datasets/akhatova/pcb-defects/versions/1/PCB_DATASET"
-dl_data_dir: "/home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/Datasets/arnablaha05/deep-pcb/versions/1/PKU-Market-PCB(Data enhanced version)"
-processed_data_dir: "/home/dilith_s_b_s/UoP/Sem_4/CO5430/CVProject/data/processed"
+# =============================================================================
+# MicroInspect Dataset Configuration
+# =============================================================================
+# SETUP INSTRUCTIONS:
+#   1. Download the datasets (see README.md > Dataset Setup for exact commands).
+#   2. Edit the THREE paths below to point to where you extracted the datasets.
+#   3. Run `python src/deep_learning/prepare_data.py` from the project root.
+# =============================================================================
+
+# --- Classical CV Dataset (PCB_DATASET from Kaggle) ---
+# Expected structure: <classical_data_dir>/PCB_USED/*.JPG  and  <classical_data_dir>/images/*/*.jpg
+# EDIT THIS to your local path:
+classical_data_dir: "data/raw/PCB_DATASET"
+
+# --- Deep Learning Dataset (DeepPCB / PKU-Market-PCB from Kaggle) ---
+# Expected structure: <dl_data_dir>/train/images/*.jpg  and  <dl_data_dir>/train/labels/*.txt
+# EDIT THIS to your local path:
+dl_data_dir: "data/raw/PKU-Market-PCB"
+
+# --- Processed (Tiled) Dataset Output Directory ---
+# This is where prepare_data.py will write the 640×640 tiles.
+# You can leave this as-is (it will be created automatically inside the repo).
+processed_data_dir: "data/processed"
+
+# =============================================================================
+# Tiling & Training Hyperparameters (do not change unless experimenting)
+# =============================================================================
 
 # Tiling parameters
 tile_size: 640
 overlap: 0.15
 
 # Training parameters
-batch_size: 16
-epochs: 50
-model_name: "yolo11n.pt"
+batch_size: 8
+epochs: 100
+
+model_name: "yolo11m.pt"
