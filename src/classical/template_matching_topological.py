@@ -83,9 +83,20 @@ def classify_defect_topological(x, y, w, h, cnt, test_gray, template_gray):
     template_roi = template_gray[y1:y2, x1:x2]
     
     # Get Copper Masks for the ROI using Otsu
-    _, test_copper = cv2.threshold(test_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    _, template_copper = cv2.threshold(template_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # Determine globally if traces are dark and background is bright
+    # If the global mean is > 127, it's highly likely the background is bright (e.g. PKU dataset)
+    global_mean = np.mean(test_gray)
+    background_is_bright = global_mean > 100
     
+    if background_is_bright:
+        # Invert so traces become white
+        _, test_copper = cv2.threshold(test_roi, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        _, template_copper = cv2.threshold(template_roi, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    else:
+        # Original logic
+        _, test_copper = cv2.threshold(test_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        _, template_copper = cv2.threshold(template_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
     # Draw the specific defect contour mask
     defect_mask = np.zeros_like(test_roi)
     shifted_cnt = cnt - [x1, y1]
@@ -111,15 +122,19 @@ def classify_defect_topological(x, y, w, h, cnt, test_gray, template_gray):
                         return 0 # Missing Hole
     
     # Dilate defect to overlap adjacent copper traces
-    # kernel = np.ones((5,5), np.uint8)
     kernel = np.ones((11,11), np.uint8)
     dilated_defect = cv2.dilate(defect_mask, kernel, iterations=1)
     
-    # Intensity check
-    test_mean = np.mean(test_gray[y:y+h, x:x+w])
-    template_mean = np.mean(template_gray[y:y+h, x:x+w])
+    # Intensity check strictly inside the defect contour
+    test_mean = cv2.mean(test_roi, mask=defect_mask)[0]
+    template_mean = cv2.mean(template_roi, mask=defect_mask)[0]
     
-    if test_mean > template_mean: # Additive Defect
+    if background_is_bright:
+        is_additive = test_mean < template_mean
+    else:
+        is_additive = test_mean > template_mean
+    
+    if is_additive: # Additive Defect
         intersection = cv2.bitwise_and(dilated_defect, template_copper)
         num_labels, _ = cv2.connectedComponents(intersection)
         count = num_labels - 1 # Exclude background
