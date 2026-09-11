@@ -1,81 +1,301 @@
-# MicroInspect: PCB Bare-Board Defect Detection
+# MicroInspect — PCB Bare-Board Defect Detection
 
-MicroInspect is a highly robust, hybrid Computer Vision pipeline designed to automatically detect and classify manufacturing defects on bare Printed Circuit Boards (PCBs). 
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.13-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![Ultralytics YOLOv11](https://img.shields.io/badge/Ultralytics-YOLOv11-00BFFF?logo=github)](https://github.com/ultralytics/ultralytics)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This project tackles the challenge using a dual-pronged approach, allowing users to choose between a blazing-fast **Classical Topological Computer Vision** pipeline that operates without needing a GPU and a state-of-the-art **Deep Learning (YOLO)** object detection model.
-
-## Supported Defect Classes
-The system detects 6 common types of PCB manufacturing defects, broken down into two main topological categories:
-
-**Subtractive Defects (Missing Copper)**
-1. **Missing Hole**: An unplated or completely missing drilled hole inside a copper pad.
-2. **Mouse Bite**: A jagged chunk of copper missing from the edge of a trace.
-3. **Open Circuit**: A complete severing of a copper trace into two or more pieces.
-
-**Additive Defects (Excess Copper)**
-1. **Short Circuit**: Excess copper that incorrectly bridges two distinct traces.
-2. **Spur**: A protrusion of excess copper attached to a single trace.
-3. **Spurious Copper**: An isolated island of excess copper not touching any traces.
-
+**MicroInspect** is a hybrid Computer Vision system that automatically detects and classifies manufacturing defects on bare Printed Circuit Boards (PCBs). It combines a real-time **Classical Topological CV** pipeline (no GPU required) with a state-of-the-art **YOLOv11 Deep Learning** model trained on the DeepPCB dataset, all accessible through a browser-based inspection UI.
 
 ---
 
-## Methodology Pipelines
+## Table of Contents
 
-### 1. Classical Template Matching
-Located in `src/classical/template_matching.py`. An extremely fast baseline that uses ORB feature-matching and homographies to perfectly align a defective Test image to a flawless Template image (supporting arbitrary rotations like 90°, 180°, 270°). It extracts defects using absolute image differencing and categorizes them loosely based on intensity heuristics.
-
-### 2. Advanced Classical Topological Classification
-Located in `src/classical/template_matching_topological.py`. This method takes the aligned difference masks and applies strict mathematical topological rules to perfectly categorize defects:
-- **Missing Hole Detection**: Uses `cv2.RETR_TREE` contour hierarchies to find copper rings in the template image, proving a missing hole exists if the defect falls inside a child contour.
-- **Intersection Counting**: Dilates defects and mathematically counts how many distinct healthy traces they intersect to differentiate between Mouse Bites (1 stump), Open Circuits (2+ stumps), Spurs (1 connection), and Shorts (2+ connections).
-
-### 3. Deep Learning Method (YOLO)
-Located in `src/dl/inference.py`. Uses a YOLO-based architecture trained on the DeepPCB dataset to directly regress bounding boxes and classify defects in a single pass.
+- [Overview](#overview)
+- [Project Structure](#project-structure)
+- [Setup](#setup)
+- [Dataset Setup](#dataset-setup)
+- [Usage](#usage)
+  - [1. Prepare Data (Deep Learning)](#1-prepare-data-deep-learning)
+  - [2. Train the Model](#2-train-the-model)
+  - [3. Run Inference (predict.py)](#3-run-inference-predictpy)
+  - [4. Evaluate Both Pipelines](#4-evaluate-both-pipelines)
+  - [5. Launch the Web UI](#5-launch-the-web-ui)
+  - [6. CLI Demo (no server)](#6-cli-demo-no-server)
+- [Methodology](#methodology)
+- [Supported Defect Classes](#supported-defect-classes)
+- [AI Use Declaration](#ai-use-declaration)
 
 ---
 
-## Developer Guide: Running the Demo UI
+## Overview
 
-MicroInspect comes with a beautiful, fully functional Web Interface built with **FastAPI** (Backend) and Vanilla JS/CSS (Frontend). 
+MicroInspect solves the problem of automated visual inspection of bare PCBs, detecting 6 common manufacturing defects including missing holes, mouse bites, open circuits, short circuits, spurs, and spurious copper. The system offers two interchangeable pipelines: a fast classical approach using ORB feature matching and topological analysis, and a deep learning approach using a YOLOv11-Medium model with sliding-window inference over high-resolution images.
+
+---
+
+## Project Structure
+
+```
+e23-co5430-PCB-Bare-Board-Defect-Detection/
+├── configs/
+│   ├── dataset.yaml              # ← EDIT THIS: set your local dataset paths
+│   ├── yolo_dataset.yaml
+│   └── tiled_yolo_dataset.yaml
+├── data/
+│   ├── raw/                      # Place downloaded datasets here
+│   └── processed/                # Auto-generated by prepare_data.py
+├── demo_ui/
+│   ├── app.py                    # FastAPI backend
+│   └── static/                   # HTML / CSS / JS frontend
+├── outputs/                      # Inference & demo results (auto-created)
+├── runs/                         # YOLO training logs & saved weights
+├── scripts/
+│   ├── demo.py                   # CLI demo (classical or DL)
+│   └── evaluate.py               # Evaluation script (metrics + PR curves)
+└── src/
+    ├── classical/
+    │   ├── template_matching.py            # Classical heuristic pipeline
+    │   └── template_matching_topological.py # Topological classification pipeline
+    ├── deep_learning/
+    │   ├── prepare_data.py        # Tile high-res images → YOLO dataset
+    │   ├── train.py               # Train YOLOv11 model
+    │   ├── predict.py             # Sliding-window inference on a single image
+    │   ├── tune.py                # Genetic algorithm hyperparameter tuning
+    │   └── inference.py           # Inference pipeline class (used by demo & UI)
+├── docs/                         # Detailed project documentation
+│   ├── DL_PIPELINE.md            # Deep Learning architecture breakdown
+│   └── YOLO_OUTPUT_EXPLAINED.md  # Training metrics and graphs explained
+```
+
+---
+
+## Setup
 
 ### Prerequisites
-Make sure your Python environment has the required dependencies installed:
+
+- Python 3.11+
+- An NVIDIA GPU with CUDA 12.1 is strongly recommended for training and DL inference. The classical pipeline runs entirely on CPU.
+
+### 1. Clone the Repository
+
 ```bash
-pip install fastapi uvicorn python-multipart opencv-python-headless numpy
-# Note: YOLO/PyTorch dependencies are required if running the 'dl' pipeline.
+git clone https://github.com/cepdnaclk/e23-co5430-PCB-Bare-Board-Defect-Detection.git
+cd e23-co5430-PCB-Bare-Board-Defect-Detection
 ```
 
-### Starting the Server
-1. Open your terminal and navigate to the project root directory:
-```bash
-cd /path/to/e23-co5430-PCB-Bare-Board-Defect-Detection
-```
-2. Start the Uvicorn development server:
-```bash
-python3 -m uvicorn demo_ui.app:app --reload --port 8000
-```
-3. Open your web browser and navigate to: [http://localhost:8000](http://localhost:8000)
+### 2. Create a Virtual Environment (recommended)
 
-### Using the Interface
-1. **Select a Mode**: Choose between `DEEP_LEARNING [YOLO]`, `CLASSICAL [TEMPLATE]`, or `CLASSICAL [TOPOLOGICAL]`.
-2. **Upload Images**:
-   - **Test Image**: Drag and drop your defective PCB image here (required for all modes).
-   - **Template Image**: Drag and drop the "golden" faultless PCB image here (only required if running a Classical mode).
-3. **Scan**: Click `INITIATE_SCAN()`. The server will process the image, classify the defects, and return a hacker-themed dashboard displaying the bounding boxes, aligned masks, and classification labels!
+```bash
+# Using venv
+python -m venv venv
+source venv/bin/activate        # Linux / macOS
+venv\Scripts\activate           # Windows
+
+# OR using conda (environment.yml provided)
+conda env create -f environment.yml
+conda activate microinspect
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+> **CPU-only install:** If you do not have an NVIDIA GPU, remove the `--extra-index-url` line from `requirements.txt` before running the command above. PyTorch will automatically fall back to the CPU build.
 
 ---
 
-## CLI Usage
-If you prefer running tests from the command line without starting a server, you can use the `demo.py` script:
+## Dataset Setup
+
+MicroInspect uses two publicly available datasets from Kaggle.
+
+### Option A — Kaggle CLI (recommended)
 
 ```bash
-# Run Deep Learning
-python scripts/demo.py --test_img data/test_img.jpg --method dl
+pip install kaggle          # Install the Kaggle CLI if not already installed
 
-# Run Classical Topological
-python scripts/demo.py --test_img data/test_img.jpg --template_img data/template_img.jpg --method classical_topological
+# Linux / macOS
+mkdir -p data/raw
+
+# Windows (PowerShell)
+mkdir data\raw -Force
+
+# 1. Classical CV dataset (PCB_DATASET)
+kaggle datasets download -d akhatova/pcb-defects -p data/raw --unzip
+
+# 2. Deep Learning dataset (DeepPCB / PKU-Market-PCB)
+kaggle datasets download -d arnablaha05/deep-pcb -p data/raw --unzip
 ```
-Results will be automatically generated and saved in the `outputs/` directory.
+
+### Option B — Manual Download
+
+1. [PCB_DATASET](https://www.kaggle.com/datasets/akhatova/pcb-defects) — Extract to `data/raw/PCB_DATASET/`
+2. [DeepPCB (PKU-Market-PCB)](https://www.kaggle.com/datasets/arnablaha05/deep-pcb) — Extract to `data/raw/PKU-Market-PCB/`
+
+### Configure Paths
+
+After downloading, open `configs/dataset.yaml` and verify the paths match where you extracted the datasets. The defaults are already set to the relative paths above (`data/raw/PCB_DATASET` and `data/raw/PKU-Market-PCB`).
 
 ---
+
+## Usage
+
+All commands below should be run from the **project root** directory.
+
+### 1. Prepare Data (Deep Learning)
+
+Tiles the high-resolution PCB images into 640×640 patches for YOLO training:
+
+```bash
+python src/deep_learning/prepare_data.py
+```
+
+Output tiles are saved to `data/processed/` (as configured in `configs/dataset.yaml`).
+
+---
+
+### 2. Train the Model
+
+```bash
+python src/deep_learning/train.py
+```
+
+Training logs and model weights are saved to `runs/deep_learning/microinspect_v2_medium/`.
+
+> The best trained weights will be at:  
+> `runs/deep_learning/microinspect_v2_medium/weights/best.pt`
+
+> **Note on Model Weights:** The `.pt` weight files are too large for GitHub and are excluded from the repository. To run inference immediately without training, please download the pre-trained `best.pt` file using the links provided in [`runs/deep_learning/microinspect_v2_medium/weights/weight_files.md`](runs/deep_learning/microinspect_v2_medium/weights/weight_files.md) and place it in that directory.
+
+**Optional — Hyperparameter Tuning (expensive):**
+```bash
+python src/deep_learning/tune.py
+```
+
+---
+
+### 3. Run Inference (`predict.py`)
+
+Run sliding-window inference on a single high-resolution PCB image:
+
+```bash
+# Linux / macOS
+python src/deep_learning/predict.py \
+    --image path/to/your/test_pcb.jpg \
+    --weights runs/deep_learning/microinspect_v2_medium/weights/best.pt \
+    --output outputs/inference_results
+
+# Windows (PowerShell — use backtick for line continuation)
+python src/deep_learning/predict.py `
+    --image path/to/your/test_pcb.jpg `
+    --weights runs/deep_learning/microinspect_v2_medium/weights/best.pt `
+    --output outputs/inference_results
+```
+
+The annotated result image is saved to the specified `--output` directory.
+
+---
+
+### 4. Evaluate Both Pipelines
+
+> **Note:** Run this from the **project root** directory so Python can resolve the `src.*` imports.
+
+```bash
+# Evaluate the Classical Topological pipeline (requires PCB_DATASET downloaded)
+python scripts/evaluate.py
+```
+
+This evaluates the Classical Topological pipeline on a 20-image random sample and prints **Precision, Recall, F1-Score**, and **Inference FPS**.
+
+To also run YOLO validation, edit the last two lines of `scripts/evaluate.py`: uncomment `evaluate_yolo(...)` and pass the path to your trained weights and `configs/tiled_yolo_dataset.yaml`.
+
+---
+
+### 5. Launch the Web UI
+
+MicroInspect includes a browser-based inspection interface with a hacker-themed dashboard.
+
+```bash
+python -m uvicorn demo_ui.app:app --reload --port 8000
+```
+
+Then open your browser at: **[http://localhost:8000](http://localhost:8000)**
+
+**Using the interface:**
+1. **Select a Mode**: `DEEP_LEARNING [YOLO]`, `CLASSICAL [TEMPLATE]`, or `CLASSICAL [TOPOLOGICAL]`
+2. **Upload Images**: Drop your defective PCB image (and a template image for classical modes)
+3. **Scan**: Click `INITIATE_SCAN()` — results appear with bounding boxes and defect labels
+
+---
+
+### 6. CLI Demo (no server)
+
+Run a quick inference from the command line without starting a server:
+
+```bash
+# Deep Learning (YOLO)
+python scripts/demo.py \
+    --test_img path/to/test_pcb.jpg \
+    --method dl \
+    --model runs/deep_learning/microinspect_v2_medium/weights/best.pt
+
+# Classical Heuristic
+python scripts/demo.py \
+    --test_img path/to/test_pcb.jpg \
+    --template_img path/to/template_pcb.jpg \
+    --method classical
+
+# Classical Topological (best classical method)
+python scripts/demo.py \
+    --test_img path/to/test_pcb.jpg \
+    --template_img path/to/template_pcb.jpg \
+    --method classical_topological
+```
+
+Results are saved to the `outputs/` directory.
+
+---
+
+## Methodology
+
+### Pipeline 1 — Classical Template Matching (`src/classical/template_matching.py`)
+
+Uses **ORB feature matching** and **homography estimation** to perfectly align a defective test image to a flawless template image, supporting arbitrary rotations (0°, 90°, 180°, 270°). Defects are extracted by absolute image differencing, then loosely categorised by intensity heuristics.
+
+### Pipeline 2 — Classical Topological Classification (`src/classical/template_matching_topological.py`)
+
+Extends Pipeline 1 by applying strict **mathematical topological rules** to the extracted difference masks:
+- **Missing Hole Detection**: Uses `cv2.RETR_TREE` contour hierarchies to find copper rings, proving a missing hole exists when a defect falls inside a child contour.
+- **Intersection Counting**: Dilates defects and counts how many distinct healthy traces they intersect to distinguish Mouse Bites, Open Circuits, Spurs, and Short Circuits.
+
+### Pipeline 3 — Deep Learning YOLO (`src/deep_learning/`)
+
+A **YOLOv11-Medium** model trained on 640×640 tiles of the DeepPCB dataset. Inference on full high-resolution images uses a **sliding-window** approach with 15% overlap, followed by **global Non-Maximum Suppression** to eliminate duplicate predictions across tile seams.
+
+---
+
+## Supported Defect Classes
+
+| ID | Class | Category | Description |
+|----|-------|----------|-------------|
+| 0 | `Missing_hole` | Subtractive | An unplated or completely missing drilled hole inside a copper pad |
+| 1 | `Mouse_bite` | Subtractive | A jagged chunk of copper missing from the edge of a trace |
+| 2 | `Open_circuit` | Subtractive | A complete severing of a copper trace into two or more pieces |
+| 3 | `Short` | Additive | Excess copper that incorrectly bridges two distinct traces |
+| 4 | `Spur` | Additive | A protrusion of excess copper attached to a single trace |
+| 5 | `Spurious_copper` | Additive | An isolated island of excess copper not touching any traces |
+
+---
+
+## Detailed Documentation
+
+For a comprehensive dive into the architecture, experimental results, and a detailed breakdown of both the Classical and Deep Learning pipelines, please visit our **[Project Documentation Page](./docs/README.md)**.
+
+---
+
+## AI Use Declaration
+
+*Generative AI tools were utilized during this project for code optimization, debugging assistance, and architectural planning, in accordance with course guidelines.*

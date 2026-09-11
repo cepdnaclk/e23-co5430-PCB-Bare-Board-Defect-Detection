@@ -9,7 +9,7 @@ FONT_SIZE = 1.9
 # Add project root to sys.path so it can find 'src'
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from src.dl.inference import YOLOInferencePipeline
+from src.deep_learning.inference import get_inference_pipeline
 from src.classical.template_matching import detect_defects
 from src.classical.template_matching_topological import detect_defects_topological
 import matplotlib.pyplot as plt
@@ -34,7 +34,7 @@ def main():
     parser.add_argument('--test_img', type=str, required=True, help="Path to test image")
     parser.add_argument('--template_img', type=str, help="Path to template image (for classical method)")
     parser.add_argument('--method', type=str, choices=['dl', 'classical', 'classical_topological'], default='dl', help="Method to use")
-    parser.add_argument('--model', type=str, default='runs/train/microinspect_yolo/weights/best.pt', help="Path to YOLO model")
+    parser.add_argument('--model', type=str, default='runs/deep_learning/microinspect_v2_medium/weights/best.pt', help="Path to trained YOLO model weights (.pt file)")
     
     args = parser.parse_args()
     
@@ -48,7 +48,7 @@ def main():
         class_names = {0: 'Missing_hole', 1: 'Mouse_bite', 2: 'Open_circuit', 3: 'Short', 4: 'Spur', 5: 'Spurious_copper'}
         
         try:
-            pipeline = YOLOInferencePipeline(args.model)
+            pipeline = get_inference_pipeline(method="single_stage", model_path=args.model)
         except Exception as e:
             print(f"Failed to load model: {e}")
             return
@@ -58,8 +58,8 @@ def main():
         
         # Create output directory
         test_img_name = Path(args.test_img).stem
-        project_root = Path(__file__).resolve().parent.parent.parent
-        out_dir = project_root / "outputs" / "dl" / test_img_name
+        project_root = Path(__file__).resolve().parent.parent
+        out_dir = project_root / "ui_results" / "dl" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
         # Save output image
@@ -98,8 +98,8 @@ def main():
             
         # Create output directory
         test_img_name = Path(args.test_img).stem
-        project_root = Path(__file__).resolve().parent.parent.parent
-        out_dir = project_root / "outputs" / "classical" / test_img_name
+        project_root = Path(__file__).resolve().parent.parent
+        out_dir = project_root / "ui_results" / "classical" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
         # Save individual images instead of a combined plot
@@ -138,8 +138,8 @@ def main():
             
         # Create output directory
         test_img_name = Path(args.test_img).stem
-        project_root = Path(__file__).resolve().parent.parent.parent
-        out_dir = project_root / "outputs" / "classical_topological" / test_img_name
+        project_root = Path(__file__).resolve().parent.parent
+        out_dir = project_root / "ui_results" / "classical_topological" / test_img_name
         out_dir.mkdir(parents=True, exist_ok=True)
         
         aligned_path = out_dir / f"{test_img_name}_aligned.jpg"

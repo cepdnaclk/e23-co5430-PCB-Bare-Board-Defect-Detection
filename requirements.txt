@@ -1,18 +1,40 @@
+# MicroInspect: PCB Bare-Board Defect Detection
+# -----------------------------------------------
+# Install with: pip install -r requirements.txt
+#
+# For CUDA-accelerated PyTorch (NVIDIA GPU), the --extra-index-url below
+# fetches the correct CUDA 12.1 wheels automatically.
+# If you are on CPU-only, remove the --extra-index-url line and torch/torchvision
+# will fall back to the CPU build.
 --extra-index-url https://download.pytorch.org/whl/cu121
+
+# --- Core Computer Vision ---
 opencv-python==5.0.0.93
 numpy==2.5.1
 scipy==1.18.0
+
+# --- Deep Learning (YOLO / PyTorch) ---
 torch==2.13.0
 torchvision==0.28.0
 ultralytics==8.4.92
+
+# --- Data Processing & Augmentation ---
 pandas==3.0.3
 albumentations==2.0.8
 scikit-learn==1.9.0
+
+# --- Visualisation ---
 matplotlib==3.11.0
 seaborn==0.13.2
+
+# --- Utilities ---
 tqdm==4.68.4
 PyYAML==6.0.3
 
-fastapi
-uvicorn
-python-multipart
+# --- Web UI (FastAPI backend) ---
+fastapi==0.115.12
+uvicorn==0.34.3
+python-multipart==0.0.20
+
+# --- Dataset Download (optional, only needed to download data from Kaggle) ---
+# kaggle

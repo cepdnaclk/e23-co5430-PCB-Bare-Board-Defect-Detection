@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 import cv2
 import numpy as np
 
@@ -83,43 +84,64 @@ def classify_defect_topological(x, y, w, h, cnt, test_gray, template_gray):
     template_roi = template_gray[y1:y2, x1:x2]
     
     # Get Copper Masks for the ROI using Otsu
-    _, test_copper = cv2.threshold(test_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    _, template_copper = cv2.threshold(template_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # Determine globally if traces are dark and background is bright
+    # We do this by checking if the majority of the image is above or below the global Otsu threshold
+    global_thresh, _ = cv2.threshold(test_gray, 0, 255, cv2.THRESH_OTSU)
+    bright_pixels = np.sum(test_gray > global_thresh)
+    dark_pixels = np.sum(test_gray <= global_thresh)
+    background_is_bright = bright_pixels > dark_pixels
     
+    if background_is_bright:
+        # Invert so traces become white
+        _, test_copper = cv2.threshold(test_roi, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        _, template_copper = cv2.threshold(template_roi, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    else:
+        # Original logic
+        _, test_copper = cv2.threshold(test_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        _, template_copper = cv2.threshold(template_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
     # Draw the specific defect contour mask
     defect_mask = np.zeros_like(test_roi)
     shifted_cnt = cnt - [x1, y1]
     cv2.drawContours(defect_mask, [shifted_cnt], -1, 255, thickness=cv2.FILLED)
     
     # 1. Missing Hole Check (Template Copper Ring)
-    # The user correctly noted that a missing hole has a metal ring around it in the template.
-    # We can detect this topological ring using contour hierarchy (RETR_TREE).
+    # Extract all holes in the template copper and create a solid mask of them
+    holes_mask = np.zeros_like(template_copper)
     t_cnts, hierarchy = cv2.findContours(template_copper, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     if hierarchy is not None:
-        M = cv2.moments(cnt)
-        if M["m00"] != 0:
-            # Defect centroid (in ROI coordinates)
-            cx = int(M["m10"] / M["m00"]) - x1
-            cy = int(M["m01"] / M["m00"]) - y1
-            
-            for i in range(len(t_cnts)):
-                child_idx = hierarchy[0][i][2]
-                if child_idx != -1: # This contour has a hole inside it
-                    child_cnt = t_cnts[child_idx]
-                    # If the defect centroid is inside this hole, it's a Missing Hole!
-                    if cv2.pointPolygonTest(child_cnt, (float(cx), float(cy)), False) >= 0:
-                        return 0 # Missing Hole
+        for i in range(len(t_cnts)):
+            child = hierarchy[0][i][2] # First child
+            while child != -1:
+                # Draw the hole as solid white
+                cv2.drawContours(holes_mask, t_cnts, child, 255, thickness=cv2.FILLED)
+                # Move to the next sibling (next hole inside the same parent trace)
+                child = hierarchy[0][child][0]
+                
+    # If the defect geometrically overlaps with any hole in the template, check the ratio
+    hole_overlap = cv2.bitwise_and(defect_mask, holes_mask)
+    overlap_area = cv2.countNonZero(hole_overlap)
+    defect_area = cv2.countNonZero(defect_mask)
+    
+    if defect_area > 0:
+        overlap_ratio = overlap_area / defect_area
+        if overlap_ratio > 0.30: # 30% of the defect must be inside the hole
+            return 0 # Missing Hole
     
     # Dilate defect to overlap adjacent copper traces
-    # kernel = np.ones((5,5), np.uint8)
     kernel = np.ones((11,11), np.uint8)
     dilated_defect = cv2.dilate(defect_mask, kernel, iterations=1)
     
-    # Intensity check
-    test_mean = np.mean(test_gray[y:y+h, x:x+w])
-    template_mean = np.mean(template_gray[y:y+h, x:x+w])
+    # Intensity check strictly inside the defect contour
+    test_mean = cv2.mean(test_roi, mask=defect_mask)[0]
+    template_mean = cv2.mean(template_roi, mask=defect_mask)[0]
     
-    if test_mean > template_mean: # Additive Defect
+    if background_is_bright:
+        is_additive = test_mean < template_mean
+    else:
+        is_additive = test_mean > template_mean
+    
+    if is_additive: # Additive Defect
         intersection = cv2.bitwise_and(dilated_defect, template_copper)
         num_labels, _ = cv2.connectedComponents(intersection)
         count = num_labels - 1 # Exclude background

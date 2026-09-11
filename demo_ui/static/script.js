@@ -62,7 +62,7 @@ function handleFile(file, dropzone, preview, nameEl) {
     if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            preview.style.backgroundImage = `url(${e.target.result})`;
+            preview.src = e.target.result;
             dropzone.classList.add('has-file');
             if (nameEl) nameEl.textContent = file.name;
         };
@@ -77,19 +77,19 @@ async function runAnalysis() {
     const fileTemplate = document.getElementById('file-template').files[0];
 
     if (!fileTest) {
-        alert("TEST_IMAGE required.");
+        alert("Please upload a Test Image.");
         return;
     }
     
     if ((method === 'classical' || method === 'classical_topological') && !fileTemplate) {
-        alert("TEMPLATE_IMAGE required for classical methods.");
+        alert("Please upload a Template Image for Baseline analysis.");
         return;
     }
 
     // Set loading state
     btn.disabled = true;
     btn.classList.add('scanning');
-    document.querySelector('.btn-text').textContent = "SCANNING...";
+    document.querySelector('.btn-text').textContent = "Analyzing...";
 
     const formData = new FormData();
     formData.append('method', method);
@@ -112,13 +112,13 @@ async function runAnalysis() {
 
         displayResults(data);
     } catch (error) {
-        alert("SCAN_ERROR: " + error.message);
+        alert("Analysis Error: " + error.message);
         console.error(error);
     } finally {
         // Reset state
         btn.disabled = false;
         btn.classList.remove('scanning');
-        document.querySelector('.btn-text').textContent = "INITIATE_SCAN()";
+        document.querySelector('.btn-text').textContent = "Run Analysis";
     }
 }
 
@@ -144,9 +144,9 @@ function displayResults(data) {
         const name = data.outputs.result.split('/').pop();
         resultsContainer.innerHTML = `
             <div class="result-item">
-                <div class="result-label">RESULT_IMAGE</div>
+                <div class="result-label">Result Image</div>
                 <img class="result-image" src="${imgPath}" alt="Result">
-                <div style="text-align:center; margin-top:5px; font-family: monospace; color:#0f0;">${name}</div>
+                <div class="result-filename">${name}</div>
             </div>
         `;
     } else {
@@ -160,20 +160,20 @@ function displayResults(data) {
         
         resultsContainer.innerHTML = `
             <div class="result-item">
-                <div class="result-label">RESULT_IMAGE (BOUNDING BOXES)</div>
+                <div class="result-label">Result Image (Bounding Boxes)</div>
                 <img class="result-image" src="${resultPath}" alt="Result">
-                <div style="text-align:center; margin-top:5px; font-family: monospace; color:#0f0;">${rName}</div>
+                <div class="result-filename">${rName}</div>
             </div>
             <div style="display: flex; gap: 20px;">
                 <div class="result-item" style="flex:1;">
-                    <div class="result-label">MASK_IMAGE</div>
+                    <div class="result-label">Mask Image</div>
                     <img class="result-image" src="${maskPath}" alt="Mask">
-                    <div style="text-align:center; margin-top:5px; font-family: monospace; color:#0f0;">${mName}</div>
+                    <div class="result-filename">${mName}</div>
                 </div>
                 <div class="result-item" style="flex:1;">
-                    <div class="result-label">ALIGNED_IMAGE</div>
+                    <div class="result-label">Aligned Image</div>
                     <img class="result-image" src="${alignedPath}" alt="Aligned">
-                    <div style="text-align:center; margin-top:5px; font-family: monospace; color:#0f0;">${aName}</div>
+                    <div class="result-filename">${aName}</div>
                 </div>
             </div>
         `;
