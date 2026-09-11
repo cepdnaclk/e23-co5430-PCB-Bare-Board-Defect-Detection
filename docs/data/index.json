@@ -1,24 +1,24 @@
 {
     "team": [
         {
-            "name": "Team Member 1",
-            "email": "email@example.com",
-            "eNumber": "E/23/XXX"
+            "name": "S.M.D.S.B. Samarakoon",
+            "email": "e23336@eng.pdn.ac.lk",
+            "eNumber": "E/23/336"
         },
         {
-            "name": "Team Member 2",
-            "email": "email@example.com",
-            "eNumber": "E/23/XXX"
+            "name": "G.P.M. Gamage",
+            "email": "e23104@eng.pdn.ac.lk",
+            "eNumber": "E/23/104"
         },
         {
-            "name": "Team Member 3",
-            "email": "email@example.com",
-            "eNumber": "E/23/XXX"
+            "name": "P.I.N. Bandara",
+            "email": "e23035@eng.pdn.ac.lk",
+            "eNumber": "E/23/035"
         },
         {
-            "name": "Team Member 4",
-            "email": "email@example.com",
-            "eNumber": "E/23/XXX"
+            "name": "W.R.A.D.N. Gunathilake",
+            "email": "e23117@eng.pdn.ac.lk",
+            "eNumber": "E/23/117"
         }
     ],
     "tags": [
