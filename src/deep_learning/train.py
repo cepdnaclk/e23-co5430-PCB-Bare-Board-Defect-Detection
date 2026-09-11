@@ -9,6 +9,7 @@ import os
 import yaml
 import logging
 from pathlib import Path
+# pyrefly: ignore [missing-import]
 from ultralytics import YOLO
 
 # Configure logging
@@ -50,11 +51,15 @@ def train_model():
     """
     Initializes and trains the YOLO model on the tiled dataset.
     """
-    # Define paths
+    # Define paths — use project_root as the anchor so this works regardless of CWD
     project_root = Path(__file__).resolve().parent.parent.parent
-    tiled_data_dir = Path('..') / 'data' / 'processed'
-    weights_dir = project_root / 'runs' / 'deep_learning' / 'weights'
-    
+    config_path = project_root / 'configs' / 'dataset.yaml'
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+    tiled_data_dir = Path(config.get('processed_data_dir', 'data/processed'))
+    if not tiled_data_dir.is_absolute():
+        tiled_data_dir = project_root / tiled_data_dir
+
     if not (tiled_data_dir / 'train').exists():
         logging.error(f"Tiled dataset not found at {tiled_data_dir}. Did you run prepare_data.py?")
         return
